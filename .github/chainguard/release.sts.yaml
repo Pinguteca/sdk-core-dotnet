@@ -1,0 +1,8 @@
+issuer: https://token.actions.githubusercontent.com
+subject_pattern: "repo:Pinguteca/sdk-core-dotnet:ref:refs/tags/v.*"
+claim_pattern:
+  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/release-(go|dotnet)\\.yml@refs/tags/v.*"
+permissions:
+  contents: write
+  packages: write
+  id-token: write

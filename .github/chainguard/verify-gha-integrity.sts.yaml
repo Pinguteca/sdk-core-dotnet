@@ -1,0 +1,6 @@
+issuer: https://token.actions.githubusercontent.com
+subject_pattern: "repo:Pinguteca/sdk-core-dotnet:pull_request"
+claim_pattern:
+  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/verify-gha-integrity\\.yml@.*"
+permissions:
+  contents: write

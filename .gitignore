@@ -1,0 +1,57 @@
+# ---------------------------------------------------------------------------
+# Cross-cutting
+# ---------------------------------------------------------------------------
+
+# Mise
+mise.local.toml
+mise.local.lock
+
+# fnox secrets
+.fnox/
+*.fnox.local
+
+# Generated outputs
+out/
+dist/
+
+# AI assistants
+.claude
+.skills
+.aider*
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# env
+.env
+.env.local
+
+# ---------------------------------------------------------------------------
+# .NET
+# ---------------------------------------------------------------------------
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+artifacts/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Coverage
+*.cobertura.xml
+*.trx
+TestResults/
+

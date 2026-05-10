@@ -1,0 +1,6 @@
+issuer: https://token.actions.githubusercontent.com
+subject_pattern: "repo:Pinguteca/sdk-core-dotnet:ref:refs/heads/main"
+claim_pattern:
+  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/build-(go|dotnet)\\.yml@refs/heads/main"
+permissions:
+  contents: read
