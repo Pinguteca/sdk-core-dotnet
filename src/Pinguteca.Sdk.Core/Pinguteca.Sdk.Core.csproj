@@ -20,4 +20,8 @@
     <PackageReference Include="Google.Protobuf" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Pinguteca.Sdk.Core.Tests" />
+  </ItemGroup>
+
 </Project>
