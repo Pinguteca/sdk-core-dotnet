@@ -1,6 +1,4 @@
 <Solution>
-  <!-- Add project references as you create them under src/ and tests/. Example:
-  <Project Path="src/SdkCoreDotnet/SdkCoreDotnet.csproj" />
-  <Project Path="tests/SdkCoreDotnet.Tests/SdkCoreDotnet.Tests.csproj" />
-  -->
+  <Project Path="src/Pinguteca.Sdk.Core/Pinguteca.Sdk.Core.csproj" />
+  <Project Path="tests/Pinguteca.Sdk.Core.Tests/Pinguteca.Sdk.Core.Tests.csproj" />
 </Solution>

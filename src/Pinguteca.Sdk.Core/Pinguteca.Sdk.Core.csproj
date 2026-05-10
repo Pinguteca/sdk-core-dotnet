@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Pinguteca.Sdk.Core</RootNamespace>
+    <AssemblyName>Pinguteca.Sdk.Core</AssemblyName>
+    <PackageId>Pinguteca.Sdk.Core</PackageId>
+    <Description>Layer 2 interceptors and primitives for Pinguteca SDKs in .NET. Speaks gRPC over HTTP/2 against the Connect-Go server.</Description>
+    <PackageTags>pinguteca;sdk;grpc;interceptor</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Grpc.Core.Api" />
+    <PackageReference Include="Google.Protobuf" />
+  </ItemGroup>
+
+</Project>
