@@ -6,34 +6,74 @@ namespace Pinguteca.Sdk.Core.Retry;
 /// <summary>
 /// Pure backoff computation extracted from
 /// <see cref="RetryInterceptor"/> so it can be unit-tested without
-/// a real RPC.
+/// a real RPC. Implements the two jitter schemes from sdk-core-go
+/// so the behavioural contract is identical across SDKs.
 /// </summary>
 internal static class RetryPolicy
 {
     /// <summary>
-    /// Decorrelated jitter as published by AWS. Each step samples
-    /// uniformly in <c>[base, previous * 3]</c>, capped at
-    /// <paramref name="maxDelay"/>. The algorithm avoids the
-    /// thundering-herd pathologies of pure exponential backoff
-    /// while bounding the worst-case wait.
+    /// AWS "full jitter":
+    /// <c>delay = MinDelay + rand(0, max(0, min(MaxDelay, ceiling) - MinDelay))</c>.
+    /// Allows zero-wait retries when <see cref="RetryOptions.MinDelay"/>
+    /// is zero (the default), which de-synchronises retry storms
+    /// most aggressively.
     /// </summary>
-    /// <param name="previous">Last delay actually waited; pass
-    /// <see cref="TimeSpan.Zero"/> on the first retry.</param>
-    /// <param name="baseDelay">Floor of the random draw.</param>
-    /// <param name="maxDelay">Cap on the returned value.</param>
-    /// <param name="random">Source of <c>[0,1)</c> doubles.</param>
-    public static TimeSpan NextDelay(
-        TimeSpan previous,
-        TimeSpan baseDelay,
+    public static TimeSpan FullDelay(
+        TimeSpan ceiling,
+        TimeSpan minDelay,
         TimeSpan maxDelay,
         IRetryRandom random)
     {
         ArgumentNullException.ThrowIfNull(random);
-        var floor = baseDelay.Ticks;
-        var ceiling = Math.Max(previous.Ticks * 3L, floor);
-        var draw = floor + (long)((ceiling - floor) * random.NextDouble());
-        var capped = Math.Min(draw, maxDelay.Ticks);
-        return TimeSpan.FromTicks(capped);
+        var upper = ceiling > maxDelay ? maxDelay : ceiling;
+        if (minDelay <= TimeSpan.Zero)
+        {
+            var draw = (long)(upper.Ticks * random.NextDouble());
+            return TimeSpan.FromTicks(draw);
+        }
+        var spreadTicks = upper.Ticks - minDelay.Ticks;
+        if (spreadTicks <= 0)
+        {
+            return minDelay;
+        }
+        var jitter = (long)(spreadTicks * random.NextDouble());
+        return TimeSpan.FromTicks(minDelay.Ticks + jitter);
+    }
+
+    /// <summary>
+    /// AWS "decorrelated jitter":
+    /// <c>delay = BaseDelay + rand(0, max(0, min(MaxDelay, prev * DecorrelationFactor) - BaseDelay))</c>.
+    /// Bounds the next delay relative to the previous one rather
+    /// than to an attempt counter.
+    /// </summary>
+    public static TimeSpan DecorrelatedDelay(
+        TimeSpan previous,
+        TimeSpan baseDelay,
+        TimeSpan maxDelay,
+        double decorrelationFactor,
+        IRetryRandom random)
+    {
+        ArgumentNullException.ThrowIfNull(random);
+        var scaled = TimeSpan.FromTicks((long)(previous.Ticks * decorrelationFactor));
+        var upper = scaled > maxDelay ? maxDelay : scaled;
+        var spreadTicks = upper.Ticks - baseDelay.Ticks;
+        if (spreadTicks <= 0)
+        {
+            return baseDelay;
+        }
+        var jitter = (long)(spreadTicks * random.NextDouble());
+        return TimeSpan.FromTicks(baseDelay.Ticks + jitter);
+    }
+
+    /// <summary>
+    /// Grow the full-jitter ceiling by <paramref name="multiplier"/>,
+    /// capped at <paramref name="maxDelay"/>. The result feeds the
+    /// next call to <see cref="FullDelay"/>.
+    /// </summary>
+    public static TimeSpan GrowCeiling(TimeSpan ceiling, double multiplier, TimeSpan maxDelay)
+    {
+        var grown = TimeSpan.FromTicks((long)(ceiling.Ticks * multiplier));
+        return grown > maxDelay ? maxDelay : grown;
     }
 }
 
@@ -43,10 +83,10 @@ internal sealed class CryptoRetryRandom : IRetryRandom
 
     public double NextDouble()
     {
-        // 53-bit mantissa of double; mirrors the canonical
-        // "ulong >> 11, divide by 2^53" recipe so the distribution
-        // is uniform on [0, 1) even at the edges. RandomNumberGenerator
-        // is FIPS-compliant per the SDK feedback rule.
+        // 53-bit mantissa of double; mirrors the canonical recipe so
+        // the distribution is uniform on [0, 1) even at the edges.
+        // RandomNumberGenerator is FIPS-compliant per the SDK feedback
+        // rule (and matches sdk-core-go's crypto/rand jitter source).
         Span<byte> buffer = stackalloc byte[8];
         RandomNumberGenerator.Fill(buffer);
         var bits = BitConverter.ToUInt64(buffer) >> 11;

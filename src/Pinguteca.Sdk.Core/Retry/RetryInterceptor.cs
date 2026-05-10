@@ -8,11 +8,21 @@ using Pinguteca.Sdk.Core.Errors;
 namespace Pinguteca.Sdk.Core.Retry;
 
 /// <summary>
-/// gRPC client interceptor that retries failed unary calls using
-/// decorrelated jitter and an optional server-supplied
-/// <c>retry-after</c> hint. Streaming calls pass through; replaying
-/// a stream is unsafe without server cooperation that this layer
-/// does not assume.
+/// gRPC client interceptor implementing the retry behavioural
+/// contract from RFC 0006. Supports both full (default) and
+/// decorrelated jitter, honours server-supplied retry hints, and
+/// retries on the canonical retryable status set
+/// (Unavailable, ResourceExhausted, Aborted, DeadlineExceeded).
+///
+/// Streaming calls pass through; replaying a stream is unsafe
+/// without server cooperation that this layer does not assume.
+///
+/// The idempotency safety gate from RFC 0006 is not enforced in
+/// this implementation: the C# gRPC ecosystem does not surface
+/// the proto <c>idempotency_level</c> option at runtime. Callers
+/// who need the gate should narrow <see cref="RetryOptions.IsRetryable"/>
+/// or use a per-method registry until the cross-SDK plugin lands.
+/// The RFC 0006 per-language table documents this divergence.
 /// </summary>
 public sealed class RetryInterceptor : Interceptor
 {
@@ -27,6 +37,14 @@ public sealed class RetryInterceptor : Interceptor
         {
             throw new ArgumentOutOfRangeException(nameof(options), _options.MaxAttempts, "MaxAttempts must be at least 1");
         }
+        if (_options.Multiplier < 1.0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(options), _options.Multiplier, "Multiplier must be at least 1.0");
+        }
+        if (_options.DecorrelationFactor < 1.0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(options), _options.DecorrelationFactor, "DecorrelationFactor must be at least 1.0");
+        }
         _random = _options.Random ?? CryptoRetryRandom.Instance;
         _delay = _options.Delay ?? Task.Delay;
     }
@@ -39,10 +57,10 @@ public sealed class RetryInterceptor : Interceptor
         var response = RunWithRetryAsync(request, context, continuation);
         return new AsyncUnaryCall<TResponse>(
             response,
-            ResponseHeadersTaskFromAsync(response),
-            () => StatusFromAsync(response),
-            () => TrailersFromAsync(response),
-            () => { /* cancellation handled by the underlying call */ });
+            response.ContinueWith(_ => new Metadata(), TaskScheduler.Default),
+            () => response.IsCompletedSuccessfully ? Status.DefaultSuccess : Status.DefaultCancelled,
+            () => [],
+            () => { });
     }
 
     private async Task<TResponse> RunWithRetryAsync<TRequest, TResponse>(
@@ -53,7 +71,8 @@ public sealed class RetryInterceptor : Interceptor
         where TResponse : class
     {
         var token = context.Options.CancellationToken;
-        var previousDelay = TimeSpan.Zero;
+        var ceiling = _options.BaseDelay;
+        var previous = _options.BaseDelay;
         RpcException? lastError = null;
 
         for (var attempt = 0; attempt < _options.MaxAttempts; attempt++)
@@ -67,8 +86,9 @@ public sealed class RetryInterceptor : Interceptor
             catch (RpcException ex) when (_options.IsRetryable(ex.StatusCode) && attempt < _options.MaxAttempts - 1)
             {
                 lastError = ex;
-                var sleep = ResolveBackoff(ex, previousDelay);
-                previousDelay = sleep;
+                var sleep = ResolveBackoff(ex, ceiling, previous);
+                previous = sleep;
+                ceiling = RetryPolicy.GrowCeiling(ceiling, _options.Multiplier, _options.MaxDelay);
                 await _delay(sleep, token).ConfigureAwait(false);
             }
             catch (RpcException ex)
@@ -82,26 +102,33 @@ public sealed class RetryInterceptor : Interceptor
         throw SdkError.FromRpcException(lastError!);
     }
 
-    private TimeSpan ResolveBackoff(RpcException ex, TimeSpan previous)
+    private TimeSpan ResolveBackoff(RpcException ex, TimeSpan ceiling, TimeSpan previous)
     {
         if (_options.HonorRetryAfter)
         {
+            // Server hints bypass MaxDelay per RFC 0006; the server speaks
+            // with more authority about its own readiness than the local
+            // ceiling does.
             var hint = SdkError.FromRpcException(ex).RetryAfter;
             if (hint is { } serverHint)
             {
                 return serverHint;
             }
         }
-        return RetryPolicy.NextDelay(previous, _options.BaseDelay, _options.MaxDelay, _random);
+
+        return _options.Strategy switch
+        {
+            RetryStrategy.Decorrelated => RetryPolicy.DecorrelatedDelay(
+                previous,
+                _options.BaseDelay,
+                _options.MaxDelay,
+                _options.DecorrelationFactor,
+                _random),
+            _ => RetryPolicy.FullDelay(
+                ceiling,
+                _options.MinDelay,
+                _options.MaxDelay,
+                _random),
+        };
     }
-
-    private static Task<Metadata> ResponseHeadersTaskFromAsync<TResponse>(Task<TResponse> source)
-        => source.ContinueWith(
-            _ => new Metadata(),
-            TaskScheduler.Default);
-
-    private static Status StatusFromAsync<TResponse>(Task<TResponse> source)
-        => source.IsCompletedSuccessfully ? Status.DefaultSuccess : Status.DefaultCancelled;
-
-    private static Metadata TrailersFromAsync<TResponse>(Task<TResponse> source) => [];
 }
