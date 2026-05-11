@@ -88,6 +88,10 @@ jobs:
         id: hash
         run: |
           echo "hashes=$(base64 -w0 out/checksums.txt)" >> "$GITHUB_OUTPUT"
+      # Bootstrap path: API key in the NUGET_API_KEY secret to register
+      # the package id on nuget.org for the first release. Switch to
+      # NuGet Trusted Publishing (OIDC) once the package is claimed.
+      # See https://learn.microsoft.com/nuget/nuget-org/trusted-publishing
       - name: Push to NuGet.org
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

@@ -21,16 +21,22 @@ git config --global core.fsync -all
 description = "Optimize Git config for CI (disable compression, fsync)"
 
 [tasks."ci:restore"]
-run = "dotnet restore SdkCoreDotnet.slnx --locked-mode"
-description = "Restore NuGet packages in locked mode"
+run = "dotnet restore SdkCoreDotnet.slnx --use-lock-file --locked-mode"
+description = "Restore NuGet packages in locked mode (fails on lockfile drift)"
 
 [tasks."ci:build"]
 run = "dotnet build SdkCoreDotnet.slnx --configuration Release --no-restore"
 description = "Build solution in Release without restoring"
 
 [tasks."ci:test"]
-run = "dotnet test SdkCoreDotnet.slnx --configuration Release --no-build --logger trx --collect:'XPlat Code Coverage'"
-description = "Run tests with TRX logger and Cobertura coverage"
+# TUnit runs on Microsoft Testing Platform; on .NET 10 SDK the legacy
+# VSTest-backed `dotnet test --logger trx` path is rejected. Invoke the
+# test project as the executable it is and pass MTP-native flags. The
+# extension packages (CrashDumpProvider, CodeCoverage, TrxReport) are
+# pulled by TUnit's metapackage, so no extra PackageReferences are
+# needed.
+run = "dotnet run --project tests/Pinguteca.Sdk.Core.Tests --configuration Release --no-build -- --report-trx --coverage"
+description = "Run tests via MTP with TRX report and coverage"
 
 [tasks."ci:format-check"]
 run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes"

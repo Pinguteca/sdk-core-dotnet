@@ -28,7 +28,7 @@ public sealed class TimeoutInterceptorTests
 
         DateTime? observed = null;
         var context = new ClientInterceptorContext<string, string>(_method, host: null, new CallOptions());
-        interceptor.AsyncUnaryCall(
+        var call = interceptor.AsyncUnaryCall(
             "req",
             context,
             (req, ctx) =>
@@ -36,6 +36,7 @@ public sealed class TimeoutInterceptorTests
                 observed = ctx.Options.Deadline;
                 return EmptyCall();
             });
+        await call.ResponseAsync;
 
         await Assert.That(observed).IsEqualTo(fixedNow.AddSeconds(5));
     }
@@ -54,7 +55,7 @@ public sealed class TimeoutInterceptorTests
             _method,
             host: null,
             new CallOptions().WithDeadline(callerDeadline));
-        interceptor.AsyncUnaryCall(
+        var call = interceptor.AsyncUnaryCall(
             "req",
             context,
             (req, ctx) =>
@@ -62,6 +63,7 @@ public sealed class TimeoutInterceptorTests
                 observed = ctx.Options.Deadline;
                 return EmptyCall();
             });
+        await call.ResponseAsync;
 
         await Assert.That(observed).IsEqualTo(callerDeadline);
     }
@@ -73,7 +75,7 @@ public sealed class TimeoutInterceptorTests
 
         DateTime? observed = null;
         var context = new ClientInterceptorContext<string, string>(_method, host: null, new CallOptions());
-        interceptor.AsyncUnaryCall(
+        var call = interceptor.AsyncUnaryCall(
             "req",
             context,
             (req, ctx) =>
@@ -81,6 +83,7 @@ public sealed class TimeoutInterceptorTests
                 observed = ctx.Options.Deadline;
                 return EmptyCall();
             });
+        await call.ResponseAsync;
 
         await Assert.That(observed).IsNull();
     }

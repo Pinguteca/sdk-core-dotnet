@@ -81,7 +81,8 @@ jobs:
         with:
           name: test-results
           path: |
-            **/test-results.trx
-            **/coverage.cobertura.xml
+            **/TestResults/**/*.trx
+            **/TestResults/**/*.cobertura.xml
+            **/TestResults/**/*-report.html
           retention-days: 30
           if-no-files-found: ignore
