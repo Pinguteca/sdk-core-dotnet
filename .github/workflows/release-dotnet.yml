@@ -29,7 +29,7 @@ jobs:
       hashes: ${{ steps.hash.outputs.hashes }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@f808768d1510423e83855289c910610ca9b43176 # v2.17.0
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
         with:
           egress-policy: audit
           disable-telemetry: "true"
@@ -76,7 +76,7 @@ jobs:
           cd out
           sha256sum packages/*.nupkg packages/*.snupkg sbom/sdk-core-dotnet.cdx.json > checksums.txt 2>/dev/null || true
       - name: Install cosign
-        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
       - name: Sign checksums
         run: |
           cd out
@@ -88,24 +88,25 @@ jobs:
         id: hash
         run: |
           echo "hashes=$(base64 -w0 out/checksums.txt)" >> "$GITHUB_OUTPUT"
-      # Bootstrap path: API key in the NUGET_API_KEY secret to register
-      # the package id on nuget.org for the first release. Switch to
-      # NuGet Trusted Publishing (OIDC) once the package is claimed.
+      # NuGet Trusted Publishing: the job's GitHub OIDC token is
+      # exchanged for a 1-hour API key at push time. No long-lived
+      # secret in the repo. Policy on nuget.org binds this workflow
+      # file name to the publisher account; first push under a new
+      # package id creates the package owned by that account.
       # See https://learn.microsoft.com/nuget/nuget-org/trusted-publishing
+      - name: NuGet login (OIDC to short-lived API key)
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_USER }}
       - name: Push to NuGet.org
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
-          if [ -z "${NUGET_API_KEY}" ]; then
-            echo "::warning::NUGET_API_KEY not set; skipping push. Configure NuGet Trusted Publishing or set the secret."
-            exit 0
-          fi
           dotnet nuget push "out/packages/*.nupkg" \
             --source "https://api.nuget.org/v3/index.json" \
-            --api-key "${NUGET_API_KEY}" \
+            --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" \
             --skip-duplicate
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.4.0
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         with:
           token: ${{ steps.octo-sts.outputs.token }}
           files: |
@@ -124,7 +125,7 @@ jobs:
       actions: read
       id-token: write
       contents: write
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a # v2.1.0
     with:
       base64-subjects: "${{ needs.release.outputs.hashes }}"
       upload-assets: true
