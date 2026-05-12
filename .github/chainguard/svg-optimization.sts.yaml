@@ -4,4 +4,3 @@ claim_pattern:
   workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/svg-optimization\\.yml@refs/heads/main"
 permissions:
   contents: write
-  id-token: write

@@ -3,4 +3,4 @@ subject_pattern: "repo:Pinguteca/sdk-core-dotnet:ref:refs/heads/main"
 claim_pattern:
   workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/lint-gha\\.yml@refs/heads/main"
 permissions:
-  security-events: write
+  security_events: write
