@@ -88,11 +88,11 @@ jobs:
         id: hash
         run: |
           echo "hashes=$(base64 -w0 out/checksums.txt)" >> "$GITHUB_OUTPUT"
-      # NuGet Trusted Publishing: the job's GitHub OIDC token is
-      # exchanged for a 1-hour API key at push time. No long-lived
-      # secret in the repo. Policy on nuget.org binds this workflow
-      # file name to the publisher account; first push under a new
-      # package id creates the package owned by that account.
+      # NuGet Trusted Publishing: the job's GitHub OIDC token is exchanged
+      # for a 1-hour API key at push time. No long-lived secret in the
+      # repo. Policy on nuget.org binds this workflow file name to the
+      # publisher account; first push under a new package id creates the
+      # package owned by that account. NUGET_USER comes from mise.ci.toml.
       # See https://learn.microsoft.com/nuget/nuget-org/trusted-publishing
       - name: NuGet login (OIDC to short-lived API key)
         id: nuget-login
