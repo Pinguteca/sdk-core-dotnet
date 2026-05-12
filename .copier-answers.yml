@@ -11,4 +11,5 @@ license: Apache-2.0
 project_name: sdk-core-dotnet
 public_repo: true
 renovate_config: renovate-config
+test_project_name: Pinguteca.Sdk.Core
 vendor: Pinguteca
