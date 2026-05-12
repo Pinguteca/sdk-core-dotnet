@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; modify the template instead.
+_commit: aaee6605d89a1274e6baebc222d121ee1bd123d7
+_src_path: gh:Pinguteca/sdk-scaffold
+description: Layer 2 interceptor library for Pinguteca SDKs in .NET
+github_owner: Pinguteca
+harden_runner: true
+identity_domain: pinguteca.com
+languages:
+- dotnet
+license: Apache-2.0
+project_name: sdk-core-dotnet
+public_repo: true
+renovate_config: renovate-config
+vendor: Pinguteca
