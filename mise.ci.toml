@@ -13,6 +13,13 @@ disable_backends = ["asdf", "vfox", "ubi"]
 [tools]
 "aqua:slsa-verifier" = "2.7.1"
 
+[env]
+# Public profile name on nuget.org. Consumed by NuGet/login@v1 via the
+# `user` input in release-dotnet.yml. Tracked here (gitted, public) rather
+# than as a GitHub repo variable: it is not a secret, and keeping it in
+# mise.ci.toml avoids click-ops drift between repos.
+NUGET_USER = "Pinguteca"
+
 [tasks."ci:git-config"]
 run = """
 git config --global core.compression 0
