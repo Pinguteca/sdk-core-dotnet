@@ -14,12 +14,13 @@ disable_backends = ["asdf", "vfox", "ubi"]
 "aqua:slsa-verifier" = "2.7.1"
 
 [env]
-# Public profile/org name on nuget.org. Consumed by NuGet/login@v1 via the
-# `user` input in release-dotnet.yml. Gitted (public) rather than a GitHub
-# repo variable: it is not a secret, and keeping it in mise.ci.toml avoids
-# click-ops drift between repos. Override if your nuget.org account name
-# differs from `vendor`.
-NUGET_USER = "Pinguteca"
+# Nuget.org username of the individual account that created the trusted-
+# publishing policy. NOT the package owner (org or user that owns the
+# package). NuGet's token-exchange endpoint requires the creator's name
+# even when the package belongs to an organization. Consumed by
+# NuGet/login@v1 via the `user` input in release-dotnet.yml. Gitted
+# (public) rather than a GitHub repo variable; not a secret.
+NUGET_USER = "Pinguladora"
 
 [tasks."ci:git-config"]
 run = """

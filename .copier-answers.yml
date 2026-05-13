@@ -8,6 +8,7 @@ identity_domain: pinguteca.com
 languages:
 - dotnet
 license: Apache-2.0
+nuget_user: Pinguladora
 project_name: sdk-core-dotnet
 public_repo: true
 renovate_config: renovate-config
