@@ -81,14 +81,24 @@ internal sealed class CryptoRetryRandom : IRetryRandom
 {
     public static readonly CryptoRetryRandom Instance = new();
 
+    // Cross-SDK contract pinned in sdk-scaffold/docs/rfc/0007-random-source-policy.md:
+    // CSPRNG-only randomness, top-53-bits / 2^53 recipe, 0.5 fallback on
+    // entropy starvation. Mirrors sdk-core-go's DefaultJitterSource.
     public double NextDouble()
     {
-        // 53-bit mantissa of double; mirrors the canonical recipe so
-        // the distribution is uniform on [0, 1) even at the edges.
-        // RandomNumberGenerator is FIPS-compliant per the SDK feedback
-        // rule (and matches sdk-core-go's crypto/rand jitter source).
         Span<byte> buffer = stackalloc byte[8];
-        RandomNumberGenerator.Fill(buffer);
+        try
+        {
+            RandomNumberGenerator.Fill(buffer);
+        }
+        catch (CryptographicException)
+        {
+            // Boot-time entropy starvation is the only realistic failure
+            // mode on Windows/Linux/macOS. RFC 0007 mandates mid-jitter
+            // rather than propagating: backoff that panics on boot is
+            // the opposite of what backoff is for.
+            return 0.5;
+        }
         var bits = BitConverter.ToUInt64(buffer) >> 11;
         return bits / (double)(1UL << 53);
     }
