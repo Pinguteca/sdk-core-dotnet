@@ -45,6 +45,7 @@ description = "Build solution in Release without restoring"
 # NuGet package id rather than the repo's PascalCase name.
 run = "dotnet run --project tests/Pinguteca.Sdk.Core.Tests --configuration Release --no-build -- --report-trx --coverage"
 description = "Run tests via MTP with TRX report and coverage"
+depends = ["ci:build"]
 
 [tasks."ci:format-check"]
 run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes"
