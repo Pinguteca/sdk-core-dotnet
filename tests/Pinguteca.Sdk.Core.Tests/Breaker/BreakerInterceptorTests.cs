@@ -52,7 +52,7 @@ public sealed class BreakerInterceptorTests
 
         var blocked = interceptor.AsyncUnaryCall("req", NewContext(), (_, _) => SuccessCall("ok"));
         var error = await Assert.ThrowsAsync<RpcException>(async () => await blocked.ResponseAsync);
-        await Assert.That(error.StatusCode).IsEqualTo(StatusCode.Unavailable);
+        await Assert.That(error!.StatusCode).IsEqualTo(StatusCode.Unavailable);
         await Assert.That(error.Status.Detail).IsEqualTo("circuit breaker open");
         await Assert.That(error.Trailers.GetValue("retry-after")).IsNotNull();
     }
@@ -112,7 +112,7 @@ public sealed class BreakerInterceptorTests
 
         var blocked = interceptor.AsyncUnaryCall("req", NewContext(), (_, _) => SuccessCall("ok"));
         var error = await Assert.ThrowsAsync<RpcException>(async () => await blocked.ResponseAsync);
-        await Assert.That(error.Status.Detail).IsEqualTo("circuit breaker open");
+        await Assert.That(error!.Status.Detail).IsEqualTo("circuit breaker open");
     }
 
     private static ClientInterceptorContext<string, string> NewContext() =>
