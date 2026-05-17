@@ -119,12 +119,12 @@
           "TUnit.Core": "1.44.0"
         }
       },
-      "pinguteca.sdk.core.compression": {
+      "pinguteca.sdk.core.logging": {
         "type": "Project",
         "dependencies": {
           "Grpc.Core.Api": "[2.80.0, )",
           "Grpc.Net.Client": "[2.80.0, )",
-          "ZstdSharp.Port": "[0.8.8, )"
+          "Microsoft.Extensions.Logging.Abstractions": "[10.0.8, )"
         }
       },
       "Grpc.Core.Api": {
@@ -151,12 +151,6 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.8"
         }
-      },
-      "ZstdSharp.Port": {
-        "type": "CentralTransitive",
-        "requested": "[0.8.8, )",
-        "resolved": "0.8.8",
-        "contentHash": "UIDFkA5DC3en3tOJ3Mof11yBx9kUQLsaeo/oFdvN6Bbkr9E9+VCqfIadHci8cu+I51K2Sl7XYWVl2R/mA75NBQ=="
       }
     }
   }

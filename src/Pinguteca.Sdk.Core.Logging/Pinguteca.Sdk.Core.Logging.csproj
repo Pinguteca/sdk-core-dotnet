@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Pinguteca.Sdk.Core.Logging</RootNamespace>
+    <AssemblyName>Pinguteca.Sdk.Core.Logging</AssemblyName>
+    <PackageId>Pinguteca.Sdk.Core.Logging</PackageId>
+    <Description>Canonical-log + wide-event gRPC interceptor for Pinguteca SDK clients. Layer 3 companion to Pinguteca.Sdk.Core; targets Microsoft.Extensions.Logging.ILogger.</Description>
+    <PackageTags>pinguteca;sdk;grpc;logging;canonical-log</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="PACKAGE.md" Pack="true" PackagePath="/README.md" Condition="Exists('PACKAGE.md')" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Grpc.Core.Api" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Pinguteca.Sdk.Core.Logging.Tests" />
+  </ItemGroup>
+
+</Project>

@@ -11,7 +11,7 @@ using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
 using TUnit.Core;
 
-namespace Pinguteca.Sdk.Core.Tests.Logging;
+namespace Pinguteca.Sdk.Core.Logging.Tests;
 
 public sealed class LoggingInterceptorTests
 {
