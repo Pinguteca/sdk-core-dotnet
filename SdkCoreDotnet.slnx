@@ -1,4 +1,6 @@
 <Solution>
   <Project Path="src/Pinguteca.Sdk.Core/Pinguteca.Sdk.Core.csproj" />
+  <Project Path="src/Pinguteca.Sdk.Core.Compression/Pinguteca.Sdk.Core.Compression.csproj" />
   <Project Path="tests/Pinguteca.Sdk.Core.Tests/Pinguteca.Sdk.Core.Tests.csproj" />
+  <Project Path="tests/Pinguteca.Sdk.Core.Compression.Tests/Pinguteca.Sdk.Core.Compression.Tests.csproj" />
 </Solution>
