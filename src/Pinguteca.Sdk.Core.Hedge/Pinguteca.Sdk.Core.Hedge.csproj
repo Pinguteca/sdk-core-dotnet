@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="PACKAGE.md" Pack="true" PackagePath="/README.md" Condition="Exists('PACKAGE.md')" />
+    <None Include="PACKAGE.md" Pack="true" PackagePath="/README.md" />
     <None Include="../../LICENSE" Pack="true" PackagePath="/" />
   </ItemGroup>
 
