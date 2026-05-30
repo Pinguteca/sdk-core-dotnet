@@ -1,5 +1,12 @@
 # sdk-core-dotnet
 
+> [!WARNING]
+> **Work in progress, not production-ready.** APIs are unstable and
+> may change without notice before the first stable release. External
+> pull requests are not accepted yet while the foundations stabilise.
+> Issues are welcome: open one before sending code if you spot a bug
+> or want a feature.
+
 Layer 2 interceptor library for Pinguteca SDKs in .NET
 
 ## Stack
