@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Pinguteca.Sdk.Ergo</RootNamespace>
+    <AssemblyName>Pinguteca.Sdk.Ergo</AssemblyName>
+    <PackageId>Pinguteca.Sdk.Ergo</PackageId>
+    <Description>Layer 1.5 ergonomic primitive kit for Pinguteca SDK clients. Composed-op orchestrator, LRO poller, and context helpers per RFC 0016.</Description>
+    <PackageTags>pinguteca;sdk;grpc;ergonomic;composed-op;lro</PackageTags>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionSuffix>alpha</VersionSuffix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="PACKAGE.md" Pack="true" PackagePath="/README.md" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Core.Api" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Pinguteca.Sdk.Ergo.Tests" />
+  </ItemGroup>
+
+</Project>

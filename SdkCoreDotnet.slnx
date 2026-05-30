@@ -4,9 +4,11 @@
   <Project Path="src/Pinguteca.Sdk.Core.Logging/Pinguteca.Sdk.Core.Logging.csproj" />
   <Project Path="src/Pinguteca.Sdk.Core.Hedge/Pinguteca.Sdk.Core.Hedge.csproj" />
   <Project Path="src/Pinguteca.Sdk.Core.Caching/Pinguteca.Sdk.Core.Caching.csproj" />
+  <Project Path="src/Pinguteca.Sdk.Ergo/Pinguteca.Sdk.Ergo.csproj" />
   <Project Path="tests/Pinguteca.Sdk.Core.Tests/Pinguteca.Sdk.Core.Tests.csproj" />
   <Project Path="tests/Pinguteca.Sdk.Core.Compression.Tests/Pinguteca.Sdk.Core.Compression.Tests.csproj" />
   <Project Path="tests/Pinguteca.Sdk.Core.Logging.Tests/Pinguteca.Sdk.Core.Logging.Tests.csproj" />
   <Project Path="tests/Pinguteca.Sdk.Core.Hedge.Tests/Pinguteca.Sdk.Core.Hedge.Tests.csproj" />
   <Project Path="tests/Pinguteca.Sdk.Core.Caching.Tests/Pinguteca.Sdk.Core.Caching.Tests.csproj" />
+  <Project Path="tests/Pinguteca.Sdk.Ergo.Tests/Pinguteca.Sdk.Ergo.Tests.csproj" />
 </Solution>
