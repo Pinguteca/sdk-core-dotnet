@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Pinguteca.Sdk.Core.Caching</RootNamespace>
+    <AssemblyName>Pinguteca.Sdk.Core.Caching</AssemblyName>
+    <PackageId>Pinguteca.Sdk.Core.Caching</PackageId>
+    <Description>Response-caching gRPC interceptor for Pinguteca SDK clients. Layer 3 companion to Pinguteca.Sdk.Core; schema-driven per-method opt-in with default-deny tenant isolation per RFC 0015.</Description>
+    <PackageTags>pinguteca;sdk;grpc;caching;etag</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="PACKAGE.md" Pack="true" PackagePath="/README.md" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Grpc.Core.Api" />
+    <PackageReference Include="Google.Protobuf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Pinguteca.Sdk.Core.Caching.Tests" />
+  </ItemGroup>
+
+</Project>
