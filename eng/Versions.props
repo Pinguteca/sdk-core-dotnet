@@ -1,0 +1,28 @@
+<Project>
+
+  <!--
+    Per-package shipped versions. Every packable project under src/
+    reads its own <Version> from one of these properties. cog bumps
+    the matching entry via pre_bump_hooks declared in cog.toml when
+    a `feat(<pkg>):` or `fix(<pkg>):` commit lands on main and the
+    Scheduled Release workflow runs `cog bump --auto`.
+
+    Initial values track the last lockstep tag (v0.3.1) so the
+    cutover does not retract any previously shipped version on
+    NuGet. Once a package's first per-package tag ships, its entry
+    here diverges from the others.
+
+    This file is the source of truth for the version that ends up
+    in the .nupkg manifest. The release workflow does NOT pass
+    RELEASE_VERSION as an env override anymore.
+  -->
+  <PropertyGroup Label="Per-package versions">
+    <PingutecaSdkCoreVersion>0.3.1</PingutecaSdkCoreVersion>
+    <PingutecaSdkCoreCachingVersion>0.3.1</PingutecaSdkCoreCachingVersion>
+    <PingutecaSdkCoreCompressionVersion>0.3.1</PingutecaSdkCoreCompressionVersion>
+    <PingutecaSdkCoreHedgeVersion>0.3.1</PingutecaSdkCoreHedgeVersion>
+    <PingutecaSdkCoreLoggingVersion>0.3.1</PingutecaSdkCoreLoggingVersion>
+    <PingutecaSdkErgoVersion>0.0.1-alpha</PingutecaSdkErgoVersion>
+  </PropertyGroup>
+
+</Project>

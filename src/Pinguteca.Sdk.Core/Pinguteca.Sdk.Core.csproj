@@ -5,6 +5,7 @@
     <RootNamespace>Pinguteca.Sdk.Core</RootNamespace>
     <AssemblyName>Pinguteca.Sdk.Core</AssemblyName>
     <PackageId>Pinguteca.Sdk.Core</PackageId>
+    <Version>$(PingutecaSdkCoreVersion)</Version>
     <Description>Layer 2 interceptors and primitives for Pinguteca SDKs in .NET. Speaks gRPC over HTTP/2 against the Connect-Go server.</Description>
     <PackageTags>pinguteca;sdk;grpc;interceptor</PackageTags>
   </PropertyGroup>

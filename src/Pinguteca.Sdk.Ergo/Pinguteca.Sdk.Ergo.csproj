@@ -5,10 +5,9 @@
     <RootNamespace>Pinguteca.Sdk.Ergo</RootNamespace>
     <AssemblyName>Pinguteca.Sdk.Ergo</AssemblyName>
     <PackageId>Pinguteca.Sdk.Ergo</PackageId>
+    <Version>$(PingutecaSdkErgoVersion)</Version>
     <Description>Layer 1.5 ergonomic primitive kit for Pinguteca SDK clients. Composed-op orchestrator, LRO poller, and context helpers per RFC 0016.</Description>
     <PackageTags>pinguteca;sdk;grpc;ergonomic;composed-op;lro</PackageTags>
-    <VersionPrefix>0.0.1</VersionPrefix>
-    <VersionSuffix>alpha</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

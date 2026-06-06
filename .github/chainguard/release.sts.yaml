@@ -1,6 +1,10 @@
 issuer: https://token.actions.githubusercontent.com
-subject_pattern: "repo:Pinguteca/sdk-core-dotnet:ref:refs/tags/v.*"
+# Per-package tags follow the cog monorepo default: <pkg>-v<semver>,
+# e.g. core-v0.4.0 or hedge-v0.1.0. Keep this list aligned with the
+# tag filter in release-dotnet.yml and the [monorepo.packages] keys
+# in cog.toml.
+subject_pattern: "repo:Pinguteca/sdk-core-dotnet:ref:refs/tags/(core|caching|compression|hedge|logging|ergo)-v.*"
 claim_pattern:
-  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/release-(go|dotnet)\\.yml@refs/tags/v.*"
+  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/release-(go|dotnet)\\.yml@refs/tags/(core|caching|compression|hedge|logging|ergo)-v.*"
 permissions:
   contents: write

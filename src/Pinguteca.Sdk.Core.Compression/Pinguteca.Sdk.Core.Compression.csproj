@@ -5,6 +5,7 @@
     <RootNamespace>Pinguteca.Sdk.Core.Compression</RootNamespace>
     <AssemblyName>Pinguteca.Sdk.Core.Compression</AssemblyName>
     <PackageId>Pinguteca.Sdk.Core.Compression</PackageId>
+    <Version>$(PingutecaSdkCoreCompressionVersion)</Version>
     <Description>Brotli and Zstd compression providers for Pinguteca SDK gRPC clients. Layer 3 companion to Pinguteca.Sdk.Core.</Description>
     <PackageTags>pinguteca;sdk;grpc;compression;brotli;zstd</PackageTags>
   </PropertyGroup>

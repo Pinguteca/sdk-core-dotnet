@@ -5,6 +5,7 @@
     <RootNamespace>Pinguteca.Sdk.Core.Caching</RootNamespace>
     <AssemblyName>Pinguteca.Sdk.Core.Caching</AssemblyName>
     <PackageId>Pinguteca.Sdk.Core.Caching</PackageId>
+    <Version>$(PingutecaSdkCoreCachingVersion)</Version>
     <Description>Response-caching gRPC interceptor for Pinguteca SDK clients. Layer 3 companion to Pinguteca.Sdk.Core; schema-driven per-method opt-in with default-deny tenant isolation per RFC 0015.</Description>
     <PackageTags>pinguteca;sdk;grpc;caching;etag</PackageTags>
   </PropertyGroup>

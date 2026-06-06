@@ -2,13 +2,30 @@ name: Release (.NET)
 
 on:
   push:
-    tags: ["v*"]
+    # Per-package tags follow the cog monorepo default: <pkg>-v<semver>,
+    # e.g. core-v0.4.0 or hedge-v0.1.0. Keep this list aligned with the
+    # keys under [monorepo.packages] in cog.toml and the subject_pattern
+    # in .github/chainguard/release.sts.yaml.
+    tags:
+      - "core-v*"
+      - "caching-v*"
+      - "compression-v*"
+      - "hedge-v*"
+      - "logging-v*"
+      - "ergo-v*"
   workflow_dispatch:
 
 permissions: {}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # Per-tag concurrency so different packages release in parallel.
+  # github.ref_name is the bare tag (e.g. core-v0.4.0, hedge-v0.1.0)
+  # so simultaneous tag pushes land in different groups and run
+  # concurrently. Re-pushing the same tag queues behind the in-flight
+  # run rather than cancelling it; cancel-in-progress: false keeps
+  # half-finished NuGet pushes from being interrupted, which would
+  # leave a hole between dotnet nuget push and the GitHub Release.
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: false
 
 env:
@@ -58,30 +75,37 @@ jobs:
           cache: false
         env:
           GITHUB_TOKEN: ${{ steps.octo-sts.outputs.token }}
-      - name: Resolve version from tag
-        id: version
+      - name: Parse release tag
+        # Slice <pkg>-v<semver> into RELEASE_PKG_NAME / RELEASE_VERSION /
+        # RELEASE_PROJECT / RELEASE_PROPERTY for the rest of the job.
+        # See the release:parse-tag task in mise.toml; same shape as
+        # the Dart pipeline so the surfaces stay aligned.
         env:
-          TAG: ${{ github.ref_name }}
-        run: |
-          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: mise run release:parse-tag >> "$GITHUB_ENV"
+      - name: Verify Versions.props matches tag
+        # cog produces the bump commit, the props edit, and the tag
+        # atomically. A mismatch means a manual edit drifted from
+        # cog's state. Fail fast before the OIDC token is consumed.
+        run: mise run release:verify-version
       - name: Restore
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: mise run ci:restore
       - name: Build
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: mise run ci:build
       - name: Pack
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
-        run: mise run ci:pack
+        # Scoped to the tagged project only. The other packable
+        # projects are left untouched so their last-shipped versions
+        # remain authoritative on NuGet. `dotnet pack` runs offline
+        # against the local build output, so it doubles as the
+        # publish dry run; the network-touching step is the NuGet
+        # push at the end of this job.
+        run: mise run release:pack
       - name: Generate SBOM
         run: mise run release:sbom
       - name: Compute checksums
         run: |
           cd out
-          sha256sum packages/*.nupkg packages/*.snupkg sbom/sdk-core-dotnet.cdx.json > checksums.txt 2>/dev/null || true
+          sha256sum packages/*.nupkg packages/*.snupkg "sbom/${RELEASE_PKG_NAME}.cdx.json" > checksums.txt 2>/dev/null || true
       - name: Install cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
       - name: Sign checksums
@@ -131,7 +155,7 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --generate-notes \
             out/packages/*.nupkg \
-            out/sbom/sdk-core-dotnet.cdx.json \
+            "out/sbom/${RELEASE_PKG_NAME}.cdx.json" \
             out/checksums.txt \
             out/checksums.txt.sigstore.json
 

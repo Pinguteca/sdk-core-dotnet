@@ -5,6 +5,7 @@
     <RootNamespace>Pinguteca.Sdk.Core.Hedge</RootNamespace>
     <AssemblyName>Pinguteca.Sdk.Core.Hedge</AssemblyName>
     <PackageId>Pinguteca.Sdk.Core.Hedge</PackageId>
+    <Version>$(PingutecaSdkCoreHedgeVersion)</Version>
     <Description>Hedged-requests gRPC interceptor for Pinguteca SDK clients. Layer 3 companion to Pinguteca.Sdk.Core; opt-in only and gated on NO_SIDE_EFFECTS per RFC 0013.</Description>
     <PackageTags>pinguteca;sdk;grpc;hedge;tail-latency</PackageTags>
   </PropertyGroup>

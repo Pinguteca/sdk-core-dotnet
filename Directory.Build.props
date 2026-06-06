@@ -1,5 +1,13 @@
 <Project>
 
+  <!--
+    Per-package versions live in eng/Versions.props; each packable
+    csproj selects its entry into $(Version). Imported here so the
+    properties are available before the per-project <Version> line
+    in each csproj evaluates.
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)eng/Versions.props" />
+
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
@@ -20,8 +28,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <Version Condition="'$(RELEASE_VERSION)' != ''">$(RELEASE_VERSION)</Version>
-    <Version Condition="'$(RELEASE_VERSION)' == ''">0.0.0-dev</Version>
+    <Version Condition="'$(Version)' == ''">0.0.0-dev</Version>
 
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>

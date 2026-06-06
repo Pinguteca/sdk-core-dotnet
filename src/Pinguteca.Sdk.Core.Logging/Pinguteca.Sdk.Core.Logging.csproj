@@ -5,6 +5,7 @@
     <RootNamespace>Pinguteca.Sdk.Core.Logging</RootNamespace>
     <AssemblyName>Pinguteca.Sdk.Core.Logging</AssemblyName>
     <PackageId>Pinguteca.Sdk.Core.Logging</PackageId>
+    <Version>$(PingutecaSdkCoreLoggingVersion)</Version>
     <Description>Canonical-log + wide-event gRPC interceptor for Pinguteca SDK clients. Layer 3 companion to Pinguteca.Sdk.Core; targets Microsoft.Extensions.Logging.ILogger.</Description>
     <PackageTags>pinguteca;sdk;grpc;logging;canonical-log</PackageTags>
   </PropertyGroup>
