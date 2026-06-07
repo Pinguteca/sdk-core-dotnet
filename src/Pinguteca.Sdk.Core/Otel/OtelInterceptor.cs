@@ -33,8 +33,13 @@ public sealed class OtelInterceptor : Interceptor
         ClientInterceptorContext<TRequest, TResponse> context,
         AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
     {
+        // OTel RPC semantic conventions name the span as
+        // "{package}.{Service}/{Method}" (no leading slash).
+        // Grpc.Core's FullName carries a leading slash, so compose
+        // the name from the parts instead of passing FullName.
+        // Reference: https://opentelemetry.io/docs/specs/semconv/rpc/grpc/
         var activity = _source.StartActivity(
-            context.Method.FullName,
+            $"{context.Method.ServiceName}/{context.Method.Name}",
             ActivityKind.Client);
 
         if (activity is not null)
