@@ -34,9 +34,15 @@ static string ExtractEmbeddedSchema()
             "Embedded contract.binpb not found in AppHost assembly. " +
             "Rebuild after `mise run proto:descriptor`.");
 
+    // Unique path per extraction. TUnit runs test classes in parallel
+    // within an assembly, so two concurrent AppHost instances would
+    // otherwise race on a shared temp file and one would see
+    // "file in use" mid-write. Process exit reaps temp files; an
+    // explicit delete here would risk pulling the mount out from
+    // under the still-running container.
     var schemaPath = Path.Combine(
         Path.GetTempPath(),
-        "pinguteca-sdk-core-dotnet-fauxrpc-schema.binpb");
+        $"pinguteca-sdk-core-dotnet-fauxrpc-schema-{Guid.NewGuid():N}.binpb");
     using var file = File.Create(schemaPath);
     stream.CopyTo(file);
     return schemaPath;
