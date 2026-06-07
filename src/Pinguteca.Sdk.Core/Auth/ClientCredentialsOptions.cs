@@ -10,6 +10,7 @@ namespace Pinguteca.Sdk.Core.Auth;
 /// <see cref="TokenUrl"/>. Works against any compliant IdP
 /// (Keycloak, Auth0, Entra ID via OIDC, Cognito, custom).
 /// </summary>
+[Obsolete("Moved to Pinguteca.Sdk.Core.OAuth.ClientCredentialsConfig in the Pinguteca.Sdk.Core.OAuth package. Slated for removal one minor after the OAuth companion ships.")]
 public sealed class ClientCredentialsOptions
 {
     /// <summary>Token endpoint URL.</summary>
@@ -62,6 +63,7 @@ public sealed class ClientCredentialsOptions
 }
 
 /// <summary>Credential transport style for the token endpoint POST.</summary>
+[Obsolete("Use Pinguteca.Sdk.Core.OAuth.ClientAuthMode instead (Basic / FormPost / None / Mtls). Slated for removal one minor after the OAuth companion ships.")]
 public enum ClientAuthStyle
 {
     /// <summary>HTTP Basic <c>Authorization</c> header.</summary>

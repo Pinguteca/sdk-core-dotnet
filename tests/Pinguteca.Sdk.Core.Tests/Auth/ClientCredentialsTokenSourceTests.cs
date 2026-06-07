@@ -1,3 +1,10 @@
+// Tests exercise Pinguteca.Sdk.Core.Auth.ClientCredentialsTokenSource,
+// which is marked [Obsolete] now that the canonical home is the
+// Pinguteca.Sdk.Core.OAuth package. The overlap window keeps this
+// surface alive for one minor so consumers can migrate; the tests
+// keep validating the legacy shape until it is deleted.
+#pragma warning disable CS0618 // Type or member is obsolete
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
