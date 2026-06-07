@@ -21,6 +21,7 @@ namespace Pinguteca.Sdk.Core.Auth;
 /// rotation interceptor can invalidate the cache on a server-side
 /// <c>Unauthenticated</c>.
 /// </summary>
+[Obsolete("Moved to Pinguteca.Sdk.Core.OAuth.ClientCredentialsTokenSource in the Pinguteca.Sdk.Core.OAuth package. Slated for removal one minor after the OAuth companion ships.")]
 public sealed class ClientCredentialsTokenSource : IRotatingTokenSource, IDisposable
 {
     private readonly ClientCredentialsOptions _options;
@@ -190,6 +191,7 @@ public sealed class ClientCredentialsTokenSource : IRotatingTokenSource, IDispos
 /// interceptor catches this and surfaces an Unauthenticated
 /// <see cref="Errors.SdkError"/> to the caller.
 /// </summary>
+[Obsolete("Use Pinguteca.Sdk.Core.OAuth.OAuthException (FromTokenEndpointError) instead. Slated for removal one minor after the OAuth companion ships.")]
 public sealed class TokenEndpointException : Exception
 {
     public TokenEndpointException(string message) : base(message) { }
