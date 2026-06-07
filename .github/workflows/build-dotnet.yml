@@ -3,29 +3,18 @@ name: Build (.NET)
 on:
   push:
     branches: [main]
-    paths:
-      - "**/*.cs"
-      - "**/*.csproj"
-      - "**/*.slnx"
-      - "Directory.Build.*"
-      - "Directory.Packages.props"
-      - "global.json"
-      - "**/packages.lock.json"
-      - "mise.toml"
-      - "mise.ci.toml"
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main]
-    paths:
-      - "**/*.cs"
-      - "**/*.csproj"
-      - "**/*.slnx"
-      - "Directory.Build.*"
-      - "Directory.Packages.props"
-      - "global.json"
-      - "**/packages.lock.json"
-      - "mise.toml"
-      - "mise.ci.toml"
+# No paths filter: branch protection requires the Build job on every
+# PR, and a path-skipped run reports as skipped (not success), which
+# blocks the merge. The earlier phantom-skip sibling workflow shared
+# `name: Build (.NET)` with this one, which put both in the same
+# concurrency group and made one cancel the other mid-flight; the
+# resulting two check runs with the same job name produced
+# non-deterministic required-check aggregation. Simpler and safer to
+# just run the real build on every PR. A docs-only PR pays one
+# extra restore+build; cheap relative to bypass-protection churn.
 
 permissions: {}
 
