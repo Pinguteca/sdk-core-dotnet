@@ -6,10 +6,45 @@ disable_changelog = false
 disable_bump_commit = false
 generate_mono_repository_global_tag = true
 generate_mono_repository_package_tags = true
+# Default `-` separator: <pkg>-v<semver>. Matches the convention
+# used by the .NET ecosystem when teams ship per-package tags
+# (Microsoft.Extensions.* eng/Versions.props bumps tag this way,
+# and Cocogitto's default). Keep aligned with the tag filter in
+# .github/workflows/release-dotnet.yml and the subject_pattern in
+# .github/chainguard/release.sts.yaml.
 branch_whitelist = ["main"]
 skip_ci = "[skip ci]"
 skip_untracked = true
 post_bump_hooks = ["git push origin {{version_tag}}"]
+
+[monorepo.packages]
+# Per-package versions and tags. cog produces tags shaped
+# <name>-v<semver> matching the workflow filter.
+#
+# pre_bump_hooks stamp the new version into eng/Versions.props
+# before cog creates the bump commit. cog has no native
+# Versions.props writer; the sed line is the canonical workaround
+# (same shape as the Dart pubspec.yaml hook). NuGet picks the
+# version up from the per-package <...Version> property when each
+# packable csproj's <Version> property evaluates.
+core = { path = "src/Pinguteca.Sdk.Core", pre_bump_hooks = [
+  "sed -i 's|<PingutecaSdkCoreVersion>[^<]*</PingutecaSdkCoreVersion>|<PingutecaSdkCoreVersion>{{version}}</PingutecaSdkCoreVersion>|' eng/Versions.props",
+] }
+caching = { path = "src/Pinguteca.Sdk.Core.Caching", pre_bump_hooks = [
+  "sed -i 's|<PingutecaSdkCoreCachingVersion>[^<]*</PingutecaSdkCoreCachingVersion>|<PingutecaSdkCoreCachingVersion>{{version}}</PingutecaSdkCoreCachingVersion>|' eng/Versions.props",
+] }
+compression = { path = "src/Pinguteca.Sdk.Core.Compression", pre_bump_hooks = [
+  "sed -i 's|<PingutecaSdkCoreCompressionVersion>[^<]*</PingutecaSdkCoreCompressionVersion>|<PingutecaSdkCoreCompressionVersion>{{version}}</PingutecaSdkCoreCompressionVersion>|' eng/Versions.props",
+] }
+hedge = { path = "src/Pinguteca.Sdk.Core.Hedge", pre_bump_hooks = [
+  "sed -i 's|<PingutecaSdkCoreHedgeVersion>[^<]*</PingutecaSdkCoreHedgeVersion>|<PingutecaSdkCoreHedgeVersion>{{version}}</PingutecaSdkCoreHedgeVersion>|' eng/Versions.props",
+] }
+logging = { path = "src/Pinguteca.Sdk.Core.Logging", pre_bump_hooks = [
+  "sed -i 's|<PingutecaSdkCoreLoggingVersion>[^<]*</PingutecaSdkCoreLoggingVersion>|<PingutecaSdkCoreLoggingVersion>{{version}}</PingutecaSdkCoreLoggingVersion>|' eng/Versions.props",
+] }
+ergo = { path = "src/Pinguteca.Sdk.Ergo", pre_bump_hooks = [
+  "sed -i 's|<PingutecaSdkErgoVersion>[^<]*</PingutecaSdkErgoVersion>|<PingutecaSdkErgoVersion>{{version}}</PingutecaSdkErgoVersion>|' eng/Versions.props",
+] }
 
 [git_hooks]
 
