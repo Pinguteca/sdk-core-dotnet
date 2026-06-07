@@ -10,6 +10,12 @@
     <OutputType>Exe</OutputType>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <!--
+      Picks up the Aspire AppHost's per RID transitive packages
+      through its ProjectReference, which makes the lockfile shape
+      OS specific too. Opt out for the same reason the AppHost does.
+    -->
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup>
