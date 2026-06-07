@@ -23,6 +23,7 @@
     <PingutecaSdkCoreHedgeVersion>0.3.1</PingutecaSdkCoreHedgeVersion>
     <PingutecaSdkCoreLoggingVersion>0.3.1</PingutecaSdkCoreLoggingVersion>
     <PingutecaSdkErgoVersion>0.0.1-alpha</PingutecaSdkErgoVersion>
+    <PingutecaSdkCoreOAuthVersion>0.0.0-dev</PingutecaSdkCoreOAuthVersion>
   </PropertyGroup>
 
 </Project>

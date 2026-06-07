@@ -13,6 +13,7 @@ on:
       - "hedge-v*"
       - "logging-v*"
       - "ergo-v*"
+      - "oauth-v*"
   workflow_dispatch:
 
 permissions: {}
