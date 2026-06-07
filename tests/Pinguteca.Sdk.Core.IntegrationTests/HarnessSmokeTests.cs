@@ -11,6 +11,19 @@ namespace Pinguteca.Sdk.Core.IntegrationTests;
 /// </summary>
 public sealed class HarnessSmokeTests
 {
+    /// <summary>
+    /// Keeps the test runner from returning MTP exit code 8 ("no tests
+    /// ran") while every meaningful test in this project is still
+    /// blocked on PR-B. Drop this once the first real harness test
+    /// lands.
+    /// </summary>
+    [Test]
+    public async Task AssemblyIdentityMatchesProject()
+    {
+        await Assert.That(typeof(HarnessSmokeTests).Assembly.GetName().Name)
+            .IsEqualTo("Pinguteca.Sdk.Core.IntegrationTests");
+    }
+
     [Test]
     [Skip("Pending PR-B: AppHost project, FauxRPC container, proto descriptor")]
     public Task PlaceholderForFauxRpcIntegration() => Task.CompletedTask;
