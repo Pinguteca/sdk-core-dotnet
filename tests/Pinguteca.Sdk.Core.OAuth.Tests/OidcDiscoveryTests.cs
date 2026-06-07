@@ -202,9 +202,14 @@ public sealed class OidcDiscoveryTests
 
 internal sealed class StubHandler : HttpMessageHandler
 {
-    private readonly Func<HttpRequestMessage, HttpResponseMessage> _respond;
+    private readonly Func<HttpRequestMessage, Task<HttpResponseMessage>> _respond;
 
     public StubHandler(Func<HttpRequestMessage, HttpResponseMessage> respond)
+        : this(req => Task.FromResult(respond(req)))
+    {
+    }
+
+    public StubHandler(Func<HttpRequestMessage, Task<HttpResponseMessage>> respond)
     {
         _respond = respond;
     }
@@ -212,5 +217,5 @@ internal sealed class StubHandler : HttpMessageHandler
     protected override Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)
-        => Task.FromResult(_respond(request));
+        => _respond(request);
 }
