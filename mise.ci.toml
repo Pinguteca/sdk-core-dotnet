@@ -85,8 +85,13 @@ sources = [
 outputs = ["tests/**/TestResults/**/*.trx"]
 
 [tasks."ci:format-check"]
-run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes"
+# --no-restore is mandatory: dotnet format opens an MSBuildWorkspace
+# that runs its own restore, which fails to evaluate the Aspire
+# AppHost SDK. ci:restore already populated obj/project.assets.json
+# for every project, so format-check just consumes those.
+run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes --no-restore"
 description = "Verify formatting in CI"
+depends = ["ci:restore"]
 
 [tasks."ci:pack"]
 run = "dotnet pack SdkCoreDotnet.slnx --configuration Release --no-build --output out/packages"

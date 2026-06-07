@@ -141,14 +141,20 @@ sources = [
 outputs = ["tests/Pinguteca.Sdk.Core.IntegrationTests/proto/contract.binpb"]
 
 [tasks.format]
-run = "dotnet format SdkCoreDotnet.slnx"
+# --no-restore + depends on restore is required because dotnet
+# format opens its own MSBuildWorkspace which fails to evaluate the
+# Aspire AppHost SDK. Restore once via the dedicated task; format
+# consumes the cached obj/project.assets.json.
+run = "dotnet format SdkCoreDotnet.slnx --no-restore"
 description = "Format code via .editorconfig rules"
 alias = "fmt"
+depends = ["restore"]
 
 [tasks."format:check"]
-run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes"
+run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes --no-restore"
 description = "Verify formatting without changes"
 alias = "fmtc"
+depends = ["restore"]
 
 [tasks.pack]
 run = "dotnet pack SdkCoreDotnet.slnx --configuration Release --output out/packages"
