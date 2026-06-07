@@ -20,7 +20,7 @@
     <PingutecaSdkCoreVersion>0.3.1</PingutecaSdkCoreVersion>
     <PingutecaSdkCoreCachingVersion>0.3.1</PingutecaSdkCoreCachingVersion>
     <PingutecaSdkCoreCompressionVersion>0.3.1</PingutecaSdkCoreCompressionVersion>
-    <PingutecaSdkCoreHedgeVersion>0.3.1</PingutecaSdkCoreHedgeVersion>
+    <PingutecaSdkCoreHedgeVersion>0.4.0</PingutecaSdkCoreHedgeVersion>
     <PingutecaSdkCoreLoggingVersion>0.3.1</PingutecaSdkCoreLoggingVersion>
     <PingutecaSdkErgoVersion>0.0.1-alpha</PingutecaSdkErgoVersion>
     <PingutecaSdkCoreOAuthVersion>0.0.0-dev</PingutecaSdkCoreOAuthVersion>
