@@ -66,9 +66,30 @@ description = "Run all linting"
 depends = ["lint:*"]
 
 [tasks.build]
+# `sources` + `outputs` let mise skip the task when nothing on the
+# input side has changed since the last build. Run with
+# `mise run --force build` to bust the cache; the shape mirrors the
+# `dotnet-scaffold` perf(mise) commit that introduced this pattern.
 run = "dotnet build SdkCoreDotnet.slnx"
 description = "Build the .NET solution"
 alias = "b"
+sources = [
+  "src/**/*.cs",
+  "src/**/*.csproj",
+  "tests/**/*.cs",
+  "tests/**/*.csproj",
+  "SdkCoreDotnet.slnx",
+  "Directory.Build.props",
+  "Directory.Packages.props",
+  "eng/Versions.props",
+  "global.json",
+]
+outputs = [
+  "src/**/bin/**/*",
+  "src/**/obj/**/*",
+  "tests/**/bin/**/*",
+  "tests/**/obj/**/*",
+]
 
 [tasks.test]
 # .NET 10 SDK requires `dotnet test --solution <file>` when the
@@ -78,11 +99,32 @@ alias = "b"
 run = "dotnet test --solution SdkCoreDotnet.slnx"
 description = "Run .NET tests across every test project in the slnx"
 alias = "t"
+sources = [
+  "src/**/*.cs",
+  "src/**/*.csproj",
+  "tests/**/*.cs",
+  "tests/**/*.csproj",
+  "SdkCoreDotnet.slnx",
+  "Directory.Build.props",
+  "Directory.Packages.props",
+  "eng/Versions.props",
+  "global.json",
+]
+outputs = ["tests/**/TestResults/**/*.trx"]
 
 [tasks.restore]
 run = "dotnet restore SdkCoreDotnet.slnx"
 description = "Restore NuGet packages"
 alias = "r"
+sources = [
+  "**/*.csproj",
+  "**/packages.lock.json",
+  "SdkCoreDotnet.slnx",
+  "Directory.Packages.props",
+  "eng/Versions.props",
+  "global.json",
+]
+outputs = ["**/obj/project.assets.json"]
 
 [tasks.format]
 run = "dotnet format SdkCoreDotnet.slnx"
@@ -97,6 +139,16 @@ alias = "fmtc"
 [tasks.pack]
 run = "dotnet pack SdkCoreDotnet.slnx --configuration Release --output out/packages"
 description = "Build NuGet packages into out/packages"
+sources = [
+  "src/**/*.cs",
+  "src/**/*.csproj",
+  "src/**/PACKAGE.md",
+  "SdkCoreDotnet.slnx",
+  "Directory.Build.props",
+  "Directory.Packages.props",
+  "eng/Versions.props",
+]
+outputs = ["out/packages/*.nupkg", "out/packages/*.snupkg"]
 
 [tasks."release:parse-tag"]
 # Slice a <pkg>-v<semver> tag (e.g. core-v0.4.0) into the four

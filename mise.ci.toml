@@ -32,10 +32,34 @@ description = "Optimize Git config for CI (disable compression, fsync)"
 [tasks."ci:restore"]
 run = "dotnet restore SdkCoreDotnet.slnx --use-lock-file --locked-mode"
 description = "Restore NuGet packages in locked mode (fails on lockfile drift)"
+sources = [
+  "**/*.csproj",
+  "**/packages.lock.json",
+  "SdkCoreDotnet.slnx",
+  "Directory.Packages.props",
+  "eng/Versions.props",
+  "global.json",
+]
+outputs = ["**/obj/project.assets.json"]
 
 [tasks."ci:build"]
 run = "dotnet build SdkCoreDotnet.slnx --configuration Release --no-restore"
 description = "Build solution in Release without restoring"
+sources = [
+  "src/**/*.cs",
+  "src/**/*.csproj",
+  "tests/**/*.cs",
+  "tests/**/*.csproj",
+  "SdkCoreDotnet.slnx",
+  "Directory.Build.props",
+  "Directory.Packages.props",
+  "eng/Versions.props",
+  "global.json",
+]
+outputs = [
+  "src/**/bin/Release/**/*",
+  "tests/**/bin/Release/**/*",
+]
 
 [tasks."ci:test"]
 # .NET 10 SDK shipped a new `dotnet test` mode that natively
@@ -47,6 +71,18 @@ description = "Build solution in Release without restoring"
 run = "dotnet test --solution SdkCoreDotnet.slnx --configuration Release --no-build --report-trx --coverage"
 description = "Run every MTP test project in the slnx with TRX + coverage"
 depends = ["ci:build"]
+sources = [
+  "src/**/*.cs",
+  "src/**/*.csproj",
+  "tests/**/*.cs",
+  "tests/**/*.csproj",
+  "SdkCoreDotnet.slnx",
+  "Directory.Build.props",
+  "Directory.Packages.props",
+  "eng/Versions.props",
+  "global.json",
+]
+outputs = ["tests/**/TestResults/**/*.trx"]
 
 [tasks."ci:format-check"]
 run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes"
@@ -55,3 +91,13 @@ description = "Verify formatting in CI"
 [tasks."ci:pack"]
 run = "dotnet pack SdkCoreDotnet.slnx --configuration Release --no-build --output out/packages"
 description = "Build NuGet packages for release"
+sources = [
+  "src/**/*.cs",
+  "src/**/*.csproj",
+  "src/**/PACKAGE.md",
+  "SdkCoreDotnet.slnx",
+  "Directory.Build.props",
+  "Directory.Packages.props",
+  "eng/Versions.props",
+]
+outputs = ["out/packages/*.nupkg", "out/packages/*.snupkg"]
