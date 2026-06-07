@@ -32,6 +32,19 @@ alias = "sv"
 run = "cog bump --auto"
 description = "Calculate next version from conventional commits and tag"
 
+[tasks."actions:lockfile"]
+# Regenerate the GitHub Actions integrity lockfile and stage it.
+# Called from the prek pre-commit hook so any commit touching a
+# workflow YAML lands a fresh .github/actions.lock.json in the same
+# commit; CI then only has to `verify` and never auto-rewrites the
+# file. The timestamp churn the upstream tool adds is accepted as
+# part of the commit per "don't fight the tool".
+run = """
+pnpm dlx gh-actions-lockfile@1.2.1 generate
+git add .github/actions.lock.json
+"""
+description = "Regenerate .github/actions.lock.json and stage it"
+
 [tasks."release:sbom"]
 # Per-package SBOM. The release workflow runs after release:pack so
 # out/packages/<PackageId>.<version>.nupkg exists; syft scans the

@@ -58,4 +58,13 @@ hooks = [
     stages = ["pre-push"],
     pass_filenames = false,
   },
+  {
+    id = "regen-actions-lockfile",
+    name = "Regenerate GHA actions lockfile",
+    language = "system",
+    entry = "mise",
+    args = ["run", "actions:lockfile"],
+    files = "\\.github/(workflows|actions)/.*\\.(yml|yaml)$",
+    pass_filenames = false,
+  },
 ]
