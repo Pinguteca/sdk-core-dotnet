@@ -14,10 +14,23 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Pinguteca.Sdk.Core/Pinguteca.Sdk.Core.csproj" />
+    <ProjectReference Include="../Pinguteca.Sdk.Core.IntegrationTests.AppHost/Pinguteca.Sdk.Core.IntegrationTests.AppHost.csproj"
+                      IsAspireProjectResource="false" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="TUnit" />
+    <PackageReference Include="Aspire.Hosting.Testing" />
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Grpc.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Google.Protobuf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="proto/contract.proto" GrpcServices="Client" ProtoRoot="proto" />
   </ItemGroup>
 
 </Project>
