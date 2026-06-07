@@ -37,7 +37,9 @@ internal sealed class CircuitBreaker
     public CircuitBreaker(BreakerOptions options)
     {
         _options = options;
-        _utcNow = options.UtcNow ?? (() => DateTimeOffset.UtcNow);
+        _utcNow = options.TimeProvider is { } tp
+            ? tp.GetUtcNow
+            : options.UtcNow ?? (() => DateTimeOffset.UtcNow);
     }
 
     public BreakerDecision TryAcquire()

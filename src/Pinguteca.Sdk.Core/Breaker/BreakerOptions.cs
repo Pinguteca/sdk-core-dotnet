@@ -17,8 +17,20 @@ public sealed class BreakerOptions
     public TimeSpan OpenDuration { get; init; } = TimeSpan.FromSeconds(5);
 
     /// <summary>
-    /// Hook for deterministic time in tests. Production code leaves
-    /// this null and the breaker uses <see cref="DateTimeOffset.UtcNow"/>.
+    /// Preferred clock injection point. When supplied the breaker
+    /// reads <see cref="System.TimeProvider.GetUtcNow"/> on every
+    /// transition decision; pair with <c>FakeTimeProvider</c> from
+    /// <c>Microsoft.Extensions.TimeProvider.Testing</c> to drive
+    /// state in tests.
+    /// </summary>
+    public TimeProvider? TimeProvider { get; init; }
+
+    /// <summary>
+    /// Legacy clock hook kept for source compatibility with callers
+    /// that wired a function before <see cref="TimeProvider"/>
+    /// existed. When both are null the breaker uses
+    /// <see cref="DateTimeOffset.UtcNow"/>; when both are set
+    /// <see cref="TimeProvider"/> wins.
     /// </summary>
     public Func<DateTimeOffset>? UtcNow { get; init; }
 }

@@ -112,8 +112,23 @@ public sealed class RetryOptions
     public IRetryRandom? Random { get; init; }
 
     /// <summary>
-    /// Optional delay injector. Production code should leave this
-    /// null so the interceptor uses <see cref="Task.Delay(TimeSpan, System.Threading.CancellationToken)"/>.
+    /// Preferred clock injection point. When supplied the
+    /// interceptor schedules retry waits through
+    /// <see cref="Task.Delay(TimeSpan, System.TimeProvider, System.Threading.CancellationToken)"/>,
+    /// so a <c>FakeTimeProvider</c> from
+    /// <c>Microsoft.Extensions.TimeProvider.Testing</c> drives the
+    /// retry waits in tests.
+    /// </summary>
+    public TimeProvider? TimeProvider { get; init; }
+
+    /// <summary>
+    /// Legacy delay hook kept for source compatibility with callers
+    /// that wired a function before <see cref="TimeProvider"/>
+    /// existed. When both are null the interceptor uses
+    /// <see cref="Task.Delay(TimeSpan, System.Threading.CancellationToken)"/>;
+    /// when both are set <see cref="Delay"/> wins (so callers can
+    /// override the default without disturbing an injected
+    /// <see cref="TimeProvider"/>).
     /// </summary>
     public Func<TimeSpan, System.Threading.CancellationToken, Task>? Delay { get; init; }
 

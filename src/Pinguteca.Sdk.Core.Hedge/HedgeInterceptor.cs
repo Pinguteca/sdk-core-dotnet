@@ -47,7 +47,9 @@ public sealed class HedgeInterceptor : Interceptor
             throw new ArgumentException("Delay must be non-negative.", nameof(options));
         }
         _options = options;
-        _delay = options.DelayFunc ?? Task.Delay;
+        _delay = options.DelayFunc ?? (options.TimeProvider is { } tp
+            ? (d, ct) => Task.Delay(d, tp, ct)
+            : Task.Delay);
     }
 
     public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
