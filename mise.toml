@@ -58,8 +58,12 @@ description = "Build the .NET solution"
 alias = "b"
 
 [tasks.test]
-run = "dotnet test SdkCoreDotnet.slnx"
-description = "Run .NET tests"
+# .NET 10 SDK requires `dotnet test --solution <file>` when the
+# test runner is set to Microsoft.Testing.Platform in global.json
+# (positional slnx is rejected in MTP mode). Same flag shape used
+# by ci:test so the CI and local invocations stay aligned.
+run = "dotnet test --solution SdkCoreDotnet.slnx"
+description = "Run .NET tests across every test project in the slnx"
 alias = "t"
 
 [tasks.restore]

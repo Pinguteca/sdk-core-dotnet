@@ -38,13 +38,14 @@ run = "dotnet build SdkCoreDotnet.slnx --configuration Release --no-restore"
 description = "Build solution in Release without restoring"
 
 [tasks."ci:test"]
-# TUnit (or any Microsoft Testing Platform-backed runner) on .NET 10 SDK
-# rejects the legacy `dotnet test --logger trx` path. Invoke the test
-# project as the executable it is. The project path uses
-# `test_project_name` from the copier answers so consumers can match the
-# NuGet package id rather than the repo's PascalCase name.
-run = "dotnet run --project tests/Pinguteca.Sdk.Core.Tests --configuration Release --no-build -- --report-trx --coverage"
-description = "Run tests via MTP with TRX report and coverage"
+# .NET 10 SDK shipped a new `dotnet test` mode that natively
+# understands Microsoft.Testing.Platform projects when the test
+# runner is set in global.json. Running it slnx-wide via
+# `--solution` executes every test project; under the legacy VSTest
+# mode the per-project executable shape was the workaround that
+# only ran one project. TRX and coverage are MTP-native flags now.
+run = "dotnet test --solution SdkCoreDotnet.slnx --configuration Release --no-build --report-trx --coverage"
+description = "Run every MTP test project in the slnx with TRX + coverage"
 depends = ["ci:build"]
 
 [tasks."ci:format-check"]
