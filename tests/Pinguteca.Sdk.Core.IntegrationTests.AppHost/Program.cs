@@ -13,11 +13,17 @@ const string FauxRpcImage =
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+// Resolve the descriptor next to the AppHost assembly rather than via
+// AppContext.BaseDirectory. Under DistributedApplicationTestingBuilder
+// the test runner controls the content root, so BaseDirectory points
+// at the test project's output and misses the schema file that the
+// Content item copies into the AppHost's own output.
+var appHostDir = Path.GetDirectoryName(typeof(Program).Assembly.Location)
+    ?? AppContext.BaseDirectory;
+var schemaPath = Path.Combine(appHostDir, "schema", "contract.binpb");
+
 builder.AddContainer("fauxrpc", FauxRpcImage)
-    .WithBindMount(
-        source: Path.Combine(AppContext.BaseDirectory, "schema", "contract.binpb"),
-        target: "/schema.binpb",
-        isReadOnly: true)
+    .WithBindMount(source: schemaPath, target: "/schema.binpb", isReadOnly: true)
     .WithArgs("run", "--addr=0.0.0.0:6660", "--schema=/schema.binpb")
     .WithHttpEndpoint(targetPort: 6660, name: "rpc");
 
