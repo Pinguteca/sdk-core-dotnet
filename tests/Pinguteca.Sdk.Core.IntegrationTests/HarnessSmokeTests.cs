@@ -1,30 +1,40 @@
+using Aspire.Hosting.Testing;
+using Grpc.Net.Client;
+using Pinguteca.Sdk.Core.IntegrationTests.Contract.V1;
+
 namespace Pinguteca.Sdk.Core.IntegrationTests;
 
 /// <summary>
-/// Placeholder for the FauxRPC harness. The integration project exists so
-/// the slnx and package-reference wiring compile end-to-end before the
-/// Aspire AppHost, sample .proto, and FauxRPC container resource land.
-///
-/// The Aspire AppHost project required to drive a real
-/// <c>DistributedApplicationTestingBuilder</c> arrives in PR-B together
-/// with the descriptor pipeline; this test is skipped until then.
+/// End-to-end smoke test for the FauxRPC-backed harness. Boots the
+/// Aspire AppHost, waits for the FauxRPC container to become healthy,
+/// and exercises a single unary RPC against the descriptor pinned in
+/// <c>proto/contract.binpb</c>. Streaming coverage and interceptor
+/// assertions land in follow-up PRs against this same harness.
 /// </summary>
 public sealed class HarnessSmokeTests
 {
-    /// <summary>
-    /// Keeps the test runner from returning MTP exit code 8 ("no tests
-    /// ran") while every meaningful test in this project is still
-    /// blocked on PR-B. Drop this once the first real harness test
-    /// lands.
-    /// </summary>
     [Test]
-    public async Task AssemblyIdentityMatchesProject()
+    public async Task FauxRpc_UnaryEcho_RoundTrips()
     {
-        await Assert.That(typeof(HarnessSmokeTests).Assembly.GetName().Name)
-            .IsEqualTo("Pinguteca.Sdk.Core.IntegrationTests");
-    }
+        var builder = await DistributedApplicationTestingBuilder
+            .CreateAsync<Projects.Pinguteca_Sdk_Core_IntegrationTests_AppHost>();
 
-    [Test]
-    [Skip("Pending PR-B: AppHost project, FauxRPC container, proto descriptor")]
-    public Task PlaceholderForFauxRpcIntegration() => Task.CompletedTask;
+        await using var app = await builder.BuildAsync();
+        await app.StartAsync();
+
+        await app.ResourceNotifications
+            .WaitForResourceHealthyAsync("fauxrpc")
+            .WaitAsync(TimeSpan.FromSeconds(60));
+
+        var endpoint = app.GetEndpoint("fauxrpc", "rpc");
+        using var channel = GrpcChannel.ForAddress(endpoint);
+        var client = new Harness.HarnessClient(channel);
+
+        var reply = await client.EchoAsync(new EchoRequest { Message = "ping" });
+
+        // FauxRPC synthesises field values from the descriptor; the
+        // contract only guarantees a non-null reply payload.
+        await Assert.That(reply).IsNotNull();
+        await Assert.That(reply.Message).IsNotNull();
+    }
 }

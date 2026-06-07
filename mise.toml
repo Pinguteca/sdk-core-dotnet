@@ -17,6 +17,7 @@ pinact = "3.9.2"
 prek = "0.3.9"
 syft = "1.42.4"
 dotnet = "10.0.203"
+buf = "1.69.0"
 
 [tasks."secret:scan"]
 run = "kingfisher scan . --no-validate --redact"
@@ -126,15 +127,34 @@ sources = [
 ]
 outputs = ["**/obj/project.assets.json"]
 
+[tasks."proto:descriptor"]
+# Build the FileDescriptorSet that FauxRPC consumes via --schema.
+# The output is committed to the repo so CI does not need buf
+# installed to run the integration tests; this task only fires when
+# the .proto or buf.yaml changes, gated by mise's sources/outputs.
+run = "buf build tests/Pinguteca.Sdk.Core.IntegrationTests/proto -o tests/Pinguteca.Sdk.Core.IntegrationTests/proto/contract.binpb"
+description = "Build the FauxRPC descriptor from the integration tests proto"
+sources = [
+  "tests/Pinguteca.Sdk.Core.IntegrationTests/proto/*.proto",
+  "tests/Pinguteca.Sdk.Core.IntegrationTests/proto/buf.yaml",
+]
+outputs = ["tests/Pinguteca.Sdk.Core.IntegrationTests/proto/contract.binpb"]
+
 [tasks.format]
-run = "dotnet format SdkCoreDotnet.slnx"
+# --no-restore + depends on restore is required because dotnet
+# format opens its own MSBuildWorkspace which fails to evaluate the
+# Aspire AppHost SDK. Restore once via the dedicated task; format
+# consumes the cached obj/project.assets.json.
+run = "dotnet format SdkCoreDotnet.slnx --no-restore"
 description = "Format code via .editorconfig rules"
 alias = "fmt"
+depends = ["restore"]
 
 [tasks."format:check"]
-run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes"
+run = "dotnet format SdkCoreDotnet.slnx --verify-no-changes --no-restore"
 description = "Verify formatting without changes"
 alias = "fmtc"
+depends = ["restore"]
 
 [tasks.pack]
 run = "dotnet pack SdkCoreDotnet.slnx --configuration Release --output out/packages"

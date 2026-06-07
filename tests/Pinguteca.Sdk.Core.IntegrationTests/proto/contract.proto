@@ -1,0 +1,56 @@
+// Sample contract for the FauxRPC-backed integration test harness.
+//
+// RFC 0018 requires every SDK's integration test surface to exercise
+// unary, server-streaming, client-streaming, and bidirectional RPC
+// shapes so interceptor coverage has no shape-specific gaps. This
+// contract is owned by this repository alone; it is not shared with
+// other SDKs and may evolve independently of any other module.
+syntax = "proto3";
+
+package pinguteca.sdk.core.integration.v1;
+
+option csharp_namespace = "Pinguteca.Sdk.Core.IntegrationTests.Contract.V1";
+
+service Harness {
+  // Unary: echoes a request shape. FauxRPC returns synthetic field
+  // values; the harness asserts only that the call completes.
+  rpc Echo(EchoRequest) returns (EchoReply);
+
+  // Server-streaming: a count of replies streamed back.
+  rpc StreamCount(StreamCountRequest) returns (stream StreamCountReply);
+
+  // Client-streaming: a sequence of addends summed at the server.
+  rpc Sum(stream SumRequest) returns (SumReply);
+
+  // Bidirectional: chat-style request and reply interleaving.
+  rpc Chat(stream ChatMessage) returns (stream ChatMessage);
+}
+
+message EchoRequest {
+  string message = 1;
+}
+
+message EchoReply {
+  string message = 1;
+}
+
+message StreamCountRequest {
+  int32 count = 1;
+}
+
+message StreamCountReply {
+  int32 value = 1;
+}
+
+message SumRequest {
+  int32 addend = 1;
+}
+
+message SumReply {
+  int32 total = 1;
+}
+
+message ChatMessage {
+  string sender = 1;
+  string text = 2;
+}

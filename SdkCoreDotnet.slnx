@@ -14,4 +14,5 @@
   <Project Path="tests/Pinguteca.Sdk.Ergo.Tests/Pinguteca.Sdk.Ergo.Tests.csproj" />
   <Project Path="tests/Pinguteca.Sdk.Core.OAuth.Tests/Pinguteca.Sdk.Core.OAuth.Tests.csproj" />
   <Project Path="tests/Pinguteca.Sdk.Core.IntegrationTests/Pinguteca.Sdk.Core.IntegrationTests.csproj" />
+  <Project Path="tests/Pinguteca.Sdk.Core.IntegrationTests.AppHost/Pinguteca.Sdk.Core.IntegrationTests.AppHost.csproj" />
 </Solution>

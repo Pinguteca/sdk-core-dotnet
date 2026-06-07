@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Aspire.AppHost.Sdk imported as a child Sdk element rather than
+    on the Project attribute. Roslyn's MSBuildWorkspace (used by
+    dotnet format) fails to parse the attribute form for custom
+    SDKs; the child-element form loads cleanly.
+  -->
+  <Sdk Name="Aspire.AppHost.Sdk" Version="13.4.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsAspireHost>true</IsAspireHost>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <!--
+      Aspire.Hosting.AppHost pulls a per RID Aspire.Dashboard.Sdk
+      package, so a packages.lock.json regenerated on one OS lacks
+      the RID specific entries the other OSes need, and .NET 10 SDK
+      does not support layering multiple RIDs into one lockfile via
+      a single restore. Opt this project out of the lockfile rather
+      than fight that mismatch every time CI runs on a different OS
+      than the developer who last restored. Acceptable here because
+      the AppHost is a test only artifact that never ships.
+    -->
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Embed the descriptor in the AppHost assembly so the bind mount
+      source path stays valid no matter where the assembly is loaded
+      from. Under DistributedApplicationTestingBuilder the AppHost
+      DLL is project-referenced into the test project's output and
+      Assembly.Location resolves there, so an on-disk Content copy
+      next to the AppHost csproj output is invisible.
+    -->
+    <EmbeddedResource Include="../Pinguteca.Sdk.Core.IntegrationTests/proto/contract.binpb">
+      <LogicalName>contract.binpb</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
