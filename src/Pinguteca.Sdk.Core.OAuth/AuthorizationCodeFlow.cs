@@ -44,12 +44,23 @@ public sealed class AuthorizationCodeFlow
             },
             cancellationToken).ConfigureAwait(false);
 
+        // RFC 8705 section 5: when the server advertises mtls_endpoint_aliases
+        // and the consumer selected mTLS authentication, the token request
+        // must hit the alias endpoint (the regular one will not be configured
+        // to require a client certificate). Authorization endpoint stays on
+        // the top-level URL because it is a browser-side redirect; only the
+        // back-channel token exchange is bound to the client cert.
+        Uri tokenEndpoint = config.AuthMode == ClientAuthMode.Mtls
+            && metadata.MtlsEndpointAliases?.TokenEndpoint is { } mtlsTokenEndpoint
+                ? mtlsTokenEndpoint
+                : metadata.TokenEndpoint;
+
         return new AuthorizationCodeFlow(new AuthorizationCodeConfig
         {
             ClientId = config.ClientId,
             ClientSecret = config.ClientSecret,
             AuthorizationEndpoint = metadata.AuthorizationEndpoint,
-            TokenEndpoint = metadata.TokenEndpoint,
+            TokenEndpoint = tokenEndpoint,
             RedirectUri = config.RedirectUri,
             Scopes = config.Scopes,
             HttpClient = config.HttpClient,
