@@ -1,6 +1,14 @@
 issuer: https://token.actions.githubusercontent.com
-subject_pattern: "repo:Pinguteca/sdk-core-dotnet:ref:refs/heads/main"
+# Two issuance shapes are accepted:
+#   - push/scheduled runs on main: subject is repo:Pinguteca/...:ref:refs/heads/main
+#   - pull_request runs from internal branches: subject is repo:Pinguteca/...:pull_request
+# Branch protection requires every change to land via PR, so build
+# must run on PRs too. The earlier secret-scan policy was widened
+# this way in #1; this is the matching fix for build, which only
+# fires on PRs that touch code paths and so had not been exercised
+# until #5.
+subject_pattern: "repo:Pinguteca/sdk-core-dotnet:(ref:refs/heads/main|pull_request)"
 claim_pattern:
-  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/build-(go|dotnet)\\.yml@refs/heads/main"
+  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/build-(go|dotnet)\\.yml@refs/(heads/main|pull/[0-9]+/merge)"
 permissions:
   contents: read
