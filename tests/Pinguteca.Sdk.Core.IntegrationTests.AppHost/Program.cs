@@ -13,14 +13,11 @@ const string FauxRpcImage =
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-// Resolve the descriptor next to the AppHost assembly rather than via
-// AppContext.BaseDirectory. Under DistributedApplicationTestingBuilder
-// the test runner controls the content root, so BaseDirectory points
-// at the test project's output and misses the schema file that the
-// Content item copies into the AppHost's own output.
-var appHostDir = Path.GetDirectoryName(typeof(Program).Assembly.Location)
-    ?? AppContext.BaseDirectory;
-var schemaPath = Path.Combine(appHostDir, "schema", "contract.binpb");
+// Extract the embedded FauxRPC descriptor to a temp path the OCI
+// runtime can bind-mount. Embedding it in the AppHost assembly lets
+// the path stay valid in both standalone runs and test-host runs
+// (where the AppHost DLL lives inside the test project's output).
+var schemaPath = ExtractEmbeddedSchema();
 
 builder.AddContainer("fauxrpc", FauxRpcImage)
     .WithBindMount(source: schemaPath, target: "/schema.binpb", isReadOnly: true)
@@ -28,3 +25,19 @@ builder.AddContainer("fauxrpc", FauxRpcImage)
     .WithHttpEndpoint(targetPort: 6660, name: "rpc");
 
 builder.Build().Run();
+
+static string ExtractEmbeddedSchema()
+{
+    var assembly = typeof(Program).Assembly;
+    using var stream = assembly.GetManifestResourceStream("contract.binpb")
+        ?? throw new InvalidOperationException(
+            "Embedded contract.binpb not found in AppHost assembly. " +
+            "Rebuild after `mise run proto:descriptor`.");
+
+    var schemaPath = Path.Combine(
+        Path.GetTempPath(),
+        "pinguteca-sdk-core-dotnet-fauxrpc-schema.binpb");
+    using var file = File.Create(schemaPath);
+    stream.CopyTo(file);
+    return schemaPath;
+}
