@@ -32,6 +32,19 @@ alias = "sv"
 run = "cog bump --auto"
 description = "Calculate next version from conventional commits and tag"
 
+[tasks."actions:lockfile"]
+# Regenerate the GitHub Actions integrity lockfile and stage it.
+# Called from the prek pre-commit hook so any commit touching a
+# workflow YAML lands a fresh .github/actions.lock.json in the same
+# commit; CI then only has to `verify` and never auto-rewrites the
+# file. The timestamp churn the upstream tool adds is accepted as
+# part of the commit per "don't fight the tool".
+run = """
+pnpm dlx gh-actions-lockfile@1.2.1 generate
+git add .github/actions.lock.json
+"""
+description = "Regenerate .github/actions.lock.json and stage it"
+
 [tasks."release:sbom"]
 # Per-package SBOM. The release workflow runs after release:pack so
 # out/packages/<PackageId>.<version>.nupkg exists; syft scans the
@@ -58,8 +71,12 @@ description = "Build the .NET solution"
 alias = "b"
 
 [tasks.test]
-run = "dotnet test SdkCoreDotnet.slnx"
-description = "Run .NET tests"
+# .NET 10 SDK requires `dotnet test --solution <file>` when the
+# test runner is set to Microsoft.Testing.Platform in global.json
+# (positional slnx is rejected in MTP mode). Same flag shape used
+# by ci:test so the CI and local invocations stay aligned.
+run = "dotnet test --solution SdkCoreDotnet.slnx"
+description = "Run .NET tests across every test project in the slnx"
 alias = "t"
 
 [tasks.restore]

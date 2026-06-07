@@ -3,11 +3,17 @@ name: Verify GHA Integrity
 on:
   push:
     branches: [main]
-    paths: [".github/workflows/**"]
+    paths:
+      - ".github/workflows/**"
+      - ".github/actions/**"
+      - ".github/actions.lock.json"
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     branches: [main]
-    paths: [".github/workflows/**"]
+    paths:
+      - ".github/workflows/**"
+      - ".github/actions/**"
+      - ".github/actions.lock.json"
 
 permissions: {}
 
@@ -21,46 +27,27 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      id-token: write # OIDC token for octo-sts so checkout can read the repo
-      contents: write # auto-commit regenerated actions.lock.json on drift
+      contents: read
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
         with:
           egress-policy: audit
           disable-telemetry: "true"
           disable-sudo-and-containers: "true"
-      - name: Optimize Git config for CI
-        run: |
-          git config --global core.compression 0
-          git config --global core.fsync -all
-      - name: Obtain token
-        id: octo-sts
-        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
-        with:
-          scope: Pinguteca/sdk-core-dotnet
-          identity: verify-gha-integrity
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
-          # Persist the octo-sts token (not GITHUB_TOKEN) so the
-          # auto-commit step can push the regenerated lockfile.
-          # The trust policy in .github/chainguard scopes the grant
-          # to this workflow and the token expires in an hour.
-          persist-credentials: true
-          token: ${{ steps.octo-sts.outputs.token }}
+          persist-credentials: false
       - name: Verify lockfile
+        # Verify-only: the upstream action re-fetches each pinned
+        # tarball and compares its hash against the stored integrity
+        # value. No regenerate, no auto-commit. Drift is fixed by
+        # the contributor locally; the prek pre-commit hook
+        # regenerates the lockfile whenever a workflow YAML changes,
+        # so the file lands fresh in the same commit and this step
+        # passes. On verify failure: run `mise run actions:lockfile`
+        # locally, inspect the diff, commit, push.
         uses: gjtorikian/gh-actions-lockfile@8abbeb1fe0a4bf20279c81fa206e6a2fc862a830 # v1.2.1
         with:
           mode: verify
-      - name: Regenerate lockfile on failure
-        if: failure()
-        uses: gjtorikian/gh-actions-lockfile@8abbeb1fe0a4bf20279c81fa206e6a2fc862a830 # v1.2.1
-        with:
-          mode: generate
-      - name: Auto-commit regenerated lockfile
-        if: failure()
-        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
-        with:
-          commit_message: "ci: regenerate .github/actions.lock.json [skip ci]"
-          file_pattern: .github/actions.lock.json

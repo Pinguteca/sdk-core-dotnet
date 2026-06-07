@@ -31,7 +31,7 @@ jobs:
       id-token: write # OIDC token for octo-sts exchange and NuGet trusted publishing
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
         with:
           egress-policy: audit
           disable-telemetry: "true"
@@ -47,7 +47,7 @@ jobs:
           git config --global core.compression 0
           git config --global core.fsync -all
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
           sparse-checkout: |
@@ -57,7 +57,7 @@ jobs:
           filter: "blob:none"
           token: ${{ steps.octo-sts.outputs.token }}
       - name: Run zizmor
-        uses: zizmorcore/zizmor-action@b572f7b1a1c2d41efaab43d504f68d215c3cd727 # v0.5.4
+        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
         with:
           config: .github/zizmor.yml
       - name: Run actionlint via reviewdog

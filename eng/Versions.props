@@ -4,8 +4,8 @@
     Per-package shipped versions. Every packable project under src/
     reads its own <Version> from one of these properties. cog bumps
     the matching entry via pre_bump_hooks declared in cog.toml when
-    a `feat(<pkg>):` or `fix(<pkg>):` commit lands on main and the
-    Scheduled Release workflow runs `cog bump --auto`.
+    a feat(pkg) or fix(pkg) commit lands on main and the Scheduled
+    Release workflow runs cog in auto-bump mode.
 
     Initial values track the last lockstep tag (v0.3.1) so the
     cutover does not retract any previously shipped version on
@@ -13,8 +13,8 @@
     here diverges from the others.
 
     This file is the source of truth for the version that ends up
-    in the .nupkg manifest. The release workflow does NOT pass
-    RELEASE_VERSION as an env override anymore.
+    in the .nupkg manifest. The release workflow does not override
+    via RELEASE_VERSION anymore.
   -->
   <PropertyGroup Label="Per-package versions">
     <PingutecaSdkCoreVersion>0.3.1</PingutecaSdkCoreVersion>

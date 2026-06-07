@@ -1,6 +1,9 @@
 issuer: https://token.actions.githubusercontent.com
-subject_pattern: "repo:Pinguteca/sdk-core-dotnet:ref:refs/heads/main"
+# Two issuance shapes are accepted, mirroring build/secret-scan:
+#   - push/scheduled runs on main: subject is repo:.../ref:refs/heads/main
+#   - pull_request runs from internal branches: subject is repo:...:pull_request
+subject_pattern: "repo:Pinguteca/sdk-core-dotnet:(ref:refs/heads/main|pull_request)"
 claim_pattern:
-  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/lint-gha\\.yml@refs/heads/main"
+  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/lint-gha\\.yml@refs/(heads/main|pull/[0-9]+/merge)"
 permissions:
   security_events: write
