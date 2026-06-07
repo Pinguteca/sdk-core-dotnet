@@ -52,9 +52,17 @@ public sealed class ClientCredentialsTokenSource : IRotatingTokenSource, IDispos
             },
             cancellationToken).ConfigureAwait(false);
 
+        // RFC 8705 section 5: prefer the mTLS-bound alias endpoint when
+        // the consumer authenticates with a client certificate. See
+        // AuthorizationCodeFlow.FromIssuerAsync for the same routing.
+        Uri tokenEndpoint = config.AuthMode == ClientAuthMode.Mtls
+            && metadata.MtlsEndpointAliases?.TokenEndpoint is { } mtlsTokenEndpoint
+                ? mtlsTokenEndpoint
+                : metadata.TokenEndpoint;
+
         return new ClientCredentialsTokenSource(new ClientCredentialsConfig
         {
-            TokenEndpoint = metadata.TokenEndpoint,
+            TokenEndpoint = tokenEndpoint,
             ClientId = config.ClientId,
             ClientSecret = config.ClientSecret,
             Scopes = config.Scopes,
