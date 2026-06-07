@@ -111,6 +111,8 @@ case "$name" in
                property="PingutecaSdkCoreLoggingVersion" ;;
   ergo)        project="src/Pinguteca.Sdk.Ergo/Pinguteca.Sdk.Ergo.csproj"
                property="PingutecaSdkErgoVersion" ;;
+  oauth)       project="src/Pinguteca.Sdk.Core.OAuth/Pinguteca.Sdk.Core.OAuth.csproj"
+               property="PingutecaSdkCoreOAuthVersion" ;;
   *)           echo "Unknown package '$name' from tag '$tag'." >&2; exit 1 ;;
 esac
 echo "RELEASE_PKG_NAME=$name"

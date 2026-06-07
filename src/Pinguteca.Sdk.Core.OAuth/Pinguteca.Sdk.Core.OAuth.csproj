@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Pinguteca.Sdk.Core.OAuth</RootNamespace>
+    <AssemblyName>Pinguteca.Sdk.Core.OAuth</AssemblyName>
+    <PackageId>Pinguteca.Sdk.Core.OAuth</PackageId>
+    <Version>$(PingutecaSdkCoreOAuthVersion)</Version>
+    <Description>OAuth 2.0 grant-flow companion for Pinguteca SDK gRPC clients. Layer 3 add-on to Pinguteca.Sdk.Core implementing the contract in cross-SDK RFC 0017: client_credentials, authorization_code with PKCE S256, OIDC discovery, and mTLS token-endpoint binding.</Description>
+    <PackageTags>pinguteca;sdk;grpc;oauth;oidc;pkce;mtls</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="PACKAGE.md" Pack="true" PackagePath="/README.md" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Implements ITokenSource defined in Pinguteca.Sdk.Core/Auth.
+      ProjectReference at build time; NuGet pack records a dependency
+      on Pinguteca.Sdk.Core at whatever <Version> the referenced
+      project resolves to (per eng/Versions.props).
+    -->
+    <ProjectReference Include="../Pinguteca.Sdk.Core/Pinguteca.Sdk.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Pinguteca.Sdk.Core.OAuth.Tests" />
+  </ItemGroup>
+
+</Project>

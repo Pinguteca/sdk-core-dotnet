@@ -45,6 +45,9 @@ logging = { path = "src/Pinguteca.Sdk.Core.Logging", pre_bump_hooks = [
 ergo = { path = "src/Pinguteca.Sdk.Ergo", pre_bump_hooks = [
   "sed -i 's|<PingutecaSdkErgoVersion>[^<]*</PingutecaSdkErgoVersion>|<PingutecaSdkErgoVersion>{{version}}</PingutecaSdkErgoVersion>|' eng/Versions.props",
 ] }
+oauth = { path = "src/Pinguteca.Sdk.Core.OAuth", pre_bump_hooks = [
+  "sed -i 's|<PingutecaSdkCoreOAuthVersion>[^<]*</PingutecaSdkCoreOAuthVersion>|<PingutecaSdkCoreOAuthVersion>{{version}}</PingutecaSdkCoreOAuthVersion>|' eng/Versions.props",
+] }
 
 [git_hooks]
 
