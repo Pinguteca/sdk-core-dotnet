@@ -52,8 +52,10 @@ public sealed class OtelInterceptorTests
 
         var activity = activities.SingleOrDefault();
         await Assert.That(activity).IsNotNull();
+        // Grpc.Core's Method.FullName carries a leading slash by
+        // convention, and the interceptor passes it through verbatim.
         await Assert.That(activity!.OperationName)
-            .IsEqualTo("pinguteca.sdk.core.integration.v1.Harness/Echo");
+            .IsEqualTo("/pinguteca.sdk.core.integration.v1.Harness/Echo");
         await Assert.That(activity.Kind).IsEqualTo(ActivityKind.Client);
         await Assert.That(activity.GetTagItem("rpc.system")).IsEqualTo("grpc");
         await Assert.That(activity.GetTagItem("rpc.service"))
