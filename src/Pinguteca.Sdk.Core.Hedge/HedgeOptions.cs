@@ -55,10 +55,21 @@ public sealed class HedgeOptions
     public Func<string, HedgeEligibility>? IsHedgeEligible { get; init; }
 
     /// <summary>
-    /// Optional delay injector. Production code should leave this
-    /// null so the interceptor uses
-    /// <see cref="Task.Delay(TimeSpan, CancellationToken)"/>. Tests
-    /// swap in a deterministic implementation.
+    /// Preferred clock injection point. When supplied the
+    /// interceptor schedules its inter-hedge stagger through
+    /// <see cref="Task.Delay(TimeSpan, System.TimeProvider, CancellationToken)"/>,
+    /// so a <c>FakeTimeProvider</c> from
+    /// <c>Microsoft.Extensions.TimeProvider.Testing</c> drives the
+    /// stagger in tests.
+    /// </summary>
+    public TimeProvider? TimeProvider { get; init; }
+
+    /// <summary>
+    /// Legacy delay hook kept for source compatibility with callers
+    /// that wired a function before <see cref="TimeProvider"/>
+    /// existed. When both are null the interceptor uses
+    /// <see cref="Task.Delay(TimeSpan, CancellationToken)"/>; when
+    /// both are set <see cref="DelayFunc"/> wins.
     /// </summary>
     public Func<TimeSpan, CancellationToken, Task>? DelayFunc { get; init; }
 }

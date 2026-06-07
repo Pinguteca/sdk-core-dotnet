@@ -46,7 +46,9 @@ public sealed class RetryInterceptor : Interceptor
             throw new ArgumentOutOfRangeException(nameof(options), _options.DecorrelationFactor, "DecorrelationFactor must be at least 1.0");
         }
         _random = _options.Random ?? CryptoRetryRandom.Instance;
-        _delay = _options.Delay ?? Task.Delay;
+        _delay = _options.Delay ?? (_options.TimeProvider is { } tp
+            ? (d, ct) => Task.Delay(d, tp, ct)
+            : Task.Delay);
     }
 
     public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
