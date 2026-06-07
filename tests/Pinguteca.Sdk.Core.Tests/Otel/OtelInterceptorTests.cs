@@ -37,7 +37,7 @@ public sealed class OtelInterceptorTests
         await Assert.That(recorded.Count).IsEqualTo(1);
         var activity = recorded[0];
         await Assert.That(activity.Kind).IsEqualTo(ActivityKind.Client);
-        await Assert.That(activity.DisplayName).IsEqualTo("/svc/m");
+        await Assert.That(activity.DisplayName).IsEqualTo("svc/m");
         await Assert.That(activity.GetTagItem("rpc.system")).IsEqualTo("grpc");
         await Assert.That(activity.GetTagItem("rpc.service")).IsEqualTo("svc");
         await Assert.That(activity.GetTagItem("rpc.method")).IsEqualTo("m");
