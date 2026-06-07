@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Install gitsign
-        uses: chainguard-dev/actions/setup-gitsign@5a9aa9e1e5d2b6cf78b38b68e7db7c3df9e1c2db # main
+        uses: chainguard-dev/actions/setup-gitsign@3b7bbeebc3a5d2bc37aa008350202651c32a26e1 # main
       - name: Verify every commit in PR
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
@@ -42,6 +42,6 @@ jobs:
           for sha in $(git rev-list "$BASE..$HEAD"); do
             echo "Verifying $sha"
             gitsign verify "$sha" \
-              --certificate-identity-regexp="^.*@pinguteca\.com$" \
+              --certificate-identity-regexp="^.*@(pinguteca\.com|gmail\.com)$" \
               --certificate-oidc-issuer="https://github.com/login/oauth"
           done

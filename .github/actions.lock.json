@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated": "2026-05-18T21:27:37.131Z",
+  "generated": "2026-06-07T00:05:16.889Z",
   "actions": {
     "step-security/harden-runner": [
       {
@@ -55,6 +55,12 @@
       }
     ],
     "chainguard-dev/actions/setup-gitsign": [
+      {
+        "version": "3b7bbeebc3a5d2bc37aa008350202651c32a26e1",
+        "sha": "3b7bbeebc3a5d2bc37aa008350202651c32a26e1",
+        "integrity": "sha256-f1c1a551e41434655338aa70ee9e30576a9c8ae7694176aa1d6d1e2ec2caa5d3",
+        "dependencies": []
+      },
       {
         "version": "5a9aa9e1e5d2b6cf78b38b68e7db7c3df9e1c2db",
         "sha": "5a9aa9e1e5d2b6cf78b38b68e7db7c3df9e1c2db",
