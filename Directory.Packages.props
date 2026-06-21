@@ -20,4 +20,8 @@
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.4.0" />
   </ItemGroup>
 
+  <ItemGroup Label="Transitive overrides">
+    <PackageVersion Include="MessagePack" Version="3.1.7" />
+  </ItemGroup>
+
 </Project>
