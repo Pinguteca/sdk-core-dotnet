@@ -116,4 +116,11 @@ public static class OAuthErrorCodes
 
     // Fallback when the IdP returns a body without a recognizable error field.
     public const string ServerError = "server_error";
+
+    // Broker-origin codes per cross-SDK RFC 0019. Surfaced when a
+    // Broker-mode source fails so consumers branch on cause without
+    // importing broker-specific types.
+    public const string BrokerUnavailable = "broker_unavailable";
+    public const string BrokerUnauthorised = "broker_unauthorised";
+    public const string BrokerProtocol = "broker_protocol";
 }
