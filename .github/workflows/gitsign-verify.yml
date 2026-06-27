@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Install gitsign
-        uses: chainguard-dev/actions/setup-gitsign@3b7bbeebc3a5d2bc37aa008350202651c32a26e1 # main
+        uses: chainguard-dev/actions/setup-gitsign@f0be69916b439d0fcced2451b23d0f27cd46d545 # main
       - name: Verify every commit in PR
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
