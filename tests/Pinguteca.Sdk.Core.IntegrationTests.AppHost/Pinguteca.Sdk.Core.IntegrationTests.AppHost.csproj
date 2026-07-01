@@ -6,7 +6,7 @@
     dotnet format) fails to parse the attribute form for custom
     SDKs; the child-element form loads cleanly.
   -->
-  <Sdk Name="Aspire.AppHost.Sdk" Version="13.4.0" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="13.4.3" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
