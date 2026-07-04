@@ -19,11 +19,11 @@
   <PropertyGroup Label="Per-package versions">
     <PingutecaSdkCoreVersion>0.4.0</PingutecaSdkCoreVersion>
     <PingutecaSdkCoreCachingVersion>0.4.0</PingutecaSdkCoreCachingVersion>
-    <PingutecaSdkCoreCompressionVersion>0.3.1</PingutecaSdkCoreCompressionVersion>
+    <PingutecaSdkCoreCompressionVersion>0.4.0</PingutecaSdkCoreCompressionVersion>
     <PingutecaSdkCoreHedgeVersion>0.4.0</PingutecaSdkCoreHedgeVersion>
-    <PingutecaSdkCoreLoggingVersion>0.3.1</PingutecaSdkCoreLoggingVersion>
+    <PingutecaSdkCoreLoggingVersion>0.4.0</PingutecaSdkCoreLoggingVersion>
     <PingutecaSdkErgoVersion>0.1.0</PingutecaSdkErgoVersion>
-    <PingutecaSdkCoreOAuthVersion>0.1.0</PingutecaSdkCoreOAuthVersion>
+    <PingutecaSdkCoreOAuthVersion>0.2.0</PingutecaSdkCoreOAuthVersion>
   </PropertyGroup>
 
 </Project>
