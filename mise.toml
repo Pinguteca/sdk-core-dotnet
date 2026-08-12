@@ -15,7 +15,7 @@ disable_backends = ["asdf", "vfox", "ubi"]
 cocogitto = "7.0.0"
 pinact = "3.10.1"
 prek = "0.4.10"
-syft = "1.48.0"
+syft = "1.49.0"
 dotnet = "10.0.203"
 buf = "1.72.0"
 
