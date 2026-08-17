@@ -11,10 +11,10 @@ disable_default_registry = true
 disable_backends = ["asdf", "vfox", "ubi"]
 
 [tools]
-"github:mongodb/kingfisher" = "1.108.0"
+"github:mongodb/kingfisher" = "1.109.0"
 cocogitto = "7.0.0"
 pinact = "3.10.1"
-prek = "0.4.10"
+prek = "0.4.11"
 syft = "1.49.0"
 dotnet = "10.0.203"
 buf = "1.72.0"
