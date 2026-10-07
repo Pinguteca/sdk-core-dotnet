@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Test">
-    <PackageVersion Include="TUnit" Version="1.72.4" />
+    <PackageVersion Include="TUnit" Version="1.72.10" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.6.0" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.6.0" />
   </ItemGroup>
