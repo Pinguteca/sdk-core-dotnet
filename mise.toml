@@ -12,6 +12,9 @@ disable_backends = ["asdf", "vfox", "ubi"]
 # Decide task freshness by hashing source contents, not mtimes. A fresh checkout
 # resets mtimes, so mtime comparison would rerun tasks needlessly.
 task.source_freshness_hash_contents = true
+# The dotnet command picks its SDK from global.json, so mise reads the same
+# file instead of keeping a second pin that could drift from it.
+idiomatic_version_file_enable_tools = ["dotnet"]
 
 [tools]
 # Tools shared by local dev and CI. Local-only tooling (git hooks, action
@@ -20,7 +23,6 @@ task.source_freshness_hash_contents = true
 "github:mongodb/kingfisher" = "2.10.0"
 cocogitto = "7.0.0"
 syft = "1.54.1"
-dotnet = "10.0.401"
 buf = "1.73.0"
 
 [tasks."secret:scan"]
