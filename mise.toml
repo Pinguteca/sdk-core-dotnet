@@ -16,7 +16,7 @@ cocogitto = "7.0.0"
 pinact = "4.1.1"
 prek = "0.5.5"
 syft = "1.54.1"
-dotnet = "10.0.203"
+dotnet = "10.0.401"
 buf = "1.73.0"
 
 [tasks."secret:scan"]
