@@ -69,7 +69,7 @@ jobs:
           persist-credentials: false
           token: ${{ steps.octo-sts.outputs.token }}
       - name: Install mise and tools
-        uses: jdx/mise-action@dba19683ed58901619b14f395a24841710cb4925 # v4.1.0
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:
           experimental: true
           install: true
