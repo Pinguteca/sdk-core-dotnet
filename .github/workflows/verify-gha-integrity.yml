@@ -27,27 +27,56 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: read
+      id-token: write # OIDC token for octo-sts to fetch a scoped repo token
+      contents: write # commit the regenerated lockfile back to the branch
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
         with:
           egress-policy: audit
           disable-telemetry: "true"
           disable-sudo-and-containers: "true"
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Obtain token
+        id: octo-sts
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
         with:
+          scope: Pinguteca/sdk-core-dotnet
+          identity: verify-gha-integrity
+      - name: Optimize Git config for CI
+        run: |
+          git config --global core.compression 0
+          git config --global core.fsync -all
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Check out the branch itself, not the PR merge commit, so a
+          # regenerated lockfile can be pushed back to it.
+          ref: ${{ github.head_ref || github.ref_name }}
+          # Keep the token out of .git/config; only the push step gets it.
           persist-credentials: false
       - name: Verify lockfile
-        # Verify-only: the upstream action re-fetches each pinned
-        # tarball and compares its hash against the stored integrity
-        # value. No regenerate, no auto-commit. Drift is fixed by
-        # the contributor locally; the prek pre-commit hook
-        # regenerates the lockfile whenever a workflow YAML changes,
-        # so the file lands fresh in the same commit and this step
-        # passes. On verify failure: run `mise run actions:lockfile`
-        # locally, inspect the diff, commit, push.
         uses: gjtorikian/gh-actions-lockfile@8abbeb1fe0a4bf20279c81fa206e6a2fc862a830 # v1.2.1
         with:
           mode: verify
+      - name: Regenerate lockfile on failure
+        if: failure()
+        uses: gjtorikian/gh-actions-lockfile@8abbeb1fe0a4bf20279c81fa206e6a2fc862a830 # v1.2.1
+        with:
+          mode: generate
+      - name: Commit regenerated lockfile
+        if: failure()
+        env:
+          TOKEN: ${{ steps.octo-sts.outputs.token }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          git add -- .github/actions.lock.json
+          git diff --cached --quiet && exit 0
+          # Renovate ignores commits from this exact address (gitIgnoredAuthors)
+          # and keeps managing its branch after the lockfile commit.
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "ci: regenerate .github/actions.lock.json [skip ci]"
+          auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
+          echo "::add-mask::${auth}"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${auth}" \
+            push origin "HEAD:refs/heads/${BRANCH}"

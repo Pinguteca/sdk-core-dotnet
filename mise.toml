@@ -2,30 +2,36 @@
 experimental = true
 env_cache = true
 env_cache_ttl = "9h"
-install_before = "7d"
+minimum_release_age = "7d"
 pin = true
 lockfile = true
 locked = false
 prefer_offline = true
 disable_default_registry = true
 disable_backends = ["asdf", "vfox", "ubi"]
+# Decide task freshness by hashing source contents, not mtimes. A fresh checkout
+# resets mtimes, so mtime comparison would rerun tasks needlessly.
+task.source_freshness_hash_contents = true
+# The dotnet command picks its SDK from global.json, so mise reads the same
+# file instead of keeping a second pin that could drift from it.
+idiomatic_version_file_enable_tools = ["dotnet"]
 
 [tools]
-"github:mongodb/kingfisher" = "1.113.0"
+# Tools shared by local dev and CI. Local-only tooling (git hooks, action
+# pinning) lives in mise.dev.toml. kingfisher sits here because the
+# secret-scan workflow runs `mise run secret:scan` under MISE_ENV=ci.
+kingfisher = "2.10.0"
 cocogitto = "7.0.0"
-pinact = "4.1.1"
-prek = "0.5.5"
 syft = "1.54.1"
-dotnet = "10.0.401"
 buf = "1.73.0"
 
 [tasks."secret:scan"]
-run = "kingfisher scan . --no-validate --redact"
+run = "kingfisher scan . --no-validate --redact --format json --output kingfisher-results.json"
 description = "Scan codebase for secrets with Kingfisher"
 alias = "ss"
 
 [tasks."secret:validate"]
-run = "kingfisher scan . --redact"
+run = "kingfisher scan . --redact --validation-rps 2"
 description = "Validate (and revoke) live secrets found by Kingfisher"
 alias = "sv"
 
@@ -61,6 +67,12 @@ syft scan "file:$nupkg" -o "cyclonedx-json=out/sbom/${RELEASE_PKG_NAME}.cdx.json
 """
 description = "Generate per-package CycloneDX SBOM from the produced nupkg"
 alias = "rsbom"
+sources = [
+    "**/*.csproj",
+    "**/packages.lock.json",
+    "Directory.Packages.props",
+]
+outputs = ["out/sbom/**/*"]
 
 [tasks.lint]
 description = "Run all linting"

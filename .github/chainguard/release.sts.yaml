@@ -5,6 +5,6 @@ issuer: https://token.actions.githubusercontent.com
 # in cog.toml.
 subject_pattern: "repo:Pinguteca/sdk-core-dotnet:ref:refs/tags/(core|caching|compression|hedge|logging|ergo|oauth)-v.*"
 claim_pattern:
-  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/release-(go|dotnet)\\.yml@refs/tags/(core|caching|compression|hedge|logging|ergo|oauth)-v.*"
+  workflow_ref: "Pinguteca/sdk-core-dotnet/\\.github/workflows/release-dotnet\\.yml@refs/tags/(core|caching|compression|hedge|logging|ergo|oauth)-v.*"
 permissions:
   contents: write
