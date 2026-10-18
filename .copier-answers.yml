@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: 279df9e
+_commit: v0.1.1
 _src_path: https://github.com/Pinguteca/sdk-scaffold.git
 description: Layer 2 interceptor library for Pinguteca SDKs in .NET
 github_owner: Pinguteca
