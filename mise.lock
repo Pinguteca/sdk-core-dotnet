@@ -95,7 +95,7 @@ backend = "core:dotnet"
 specifiers = ["10.0.401"]
 
 [[tools.kingfisher]]
-version = "v2.13.0"
+version = "2.13.0"
 backend = "github:mongodb/kingfisher"
 specifiers = ["v2.13.0"]
 
