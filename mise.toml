@@ -23,7 +23,7 @@ idiomatic_version_file_enable_tools = ["dotnet"]
 kingfisher = "v2.14.0"
 cocogitto = "7.0.0"
 syft = "1.55.0"
-buf = "1.74.0"
+buf = "1.75.0"
 
 [tasks."secret:scan"]
 run = "kingfisher scan . --no-validate --redact --format json --output kingfisher-results.json"
