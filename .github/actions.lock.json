@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated": "2026-11-21T14:12:00.145Z",
+  "generated": "2026-11-24T08:45:57.405Z",
   "actions": {
     "step-security/harden-runner": [
       {
@@ -42,9 +42,9 @@
     ],
     "jdx/mise-action": [
       {
-        "version": "d5574b52816a478f9d4e6529a3f6ff17a8a36785",
-        "sha": "d5574b52816a478f9d4e6529a3f6ff17a8a36785",
-        "integrity": "sha256-dbd3dc3ecc48fb421afec71b762e3cd27d5da3be2985cd2809634f85a8fbf0e6",
+        "version": "236a21c3b91f5db6d4e174b348674a0f0caac06d",
+        "sha": "236a21c3b91f5db6d4e174b348674a0f0caac06d",
+        "integrity": "sha256-e31e5a4b07899d851a47f2ac0c041128691c4c4ce27134a23c1ce9b7730442bc",
         "dependencies": []
       }
     ],
@@ -271,9 +271,9 @@
     ],
     "chainguard-dev/actions/setup-gitsign": [
       {
-        "version": "a25ce483d875a46f4c837e85e32e0fda602693f5",
-        "sha": "a25ce483d875a46f4c837e85e32e0fda602693f5",
-        "integrity": "sha256-a865a6f8403e35b3933037668b1ddebd30a1021b4d5d0c4a384d7650eb2eee47",
+        "version": "d496b2ab65497cac13d77ccd5038b8aae7e8c43b",
+        "sha": "d496b2ab65497cac13d77ccd5038b8aae7e8c43b",
+        "integrity": "sha256-61ccbbc8ad52cfbbbfc722577d852c9a0e53e2f5172b91ae635c021902fbe53d",
         "dependencies": []
       }
     ],
